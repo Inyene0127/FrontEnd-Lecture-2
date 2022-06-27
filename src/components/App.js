@@ -1,7 +1,7 @@
 import React, {useState} from 'react'
-import GameScreen from './GameScreen'
-import GamePlay from './GamePlay'
-import GameEnd from './GameEnd'
+import GameScreen from './components/GameScreen'
+import GamePlay from './components/GamePlay'
+import GameEnd from './components/GameEnd'
 
 const App = () => {
   const [gameMode, setGameMode] = useState('Game Display');//change the name, give a more definitive name to the state
