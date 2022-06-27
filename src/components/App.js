@@ -4,21 +4,25 @@ import GamePlay from './GamePlay'
 import GameEnd from './GameEnd'
 
 const App = () => {
-  const [play, setPlay] = useState(0);
-  const [round, setRound] = useState('3');   
+  const [gameMode, setGameMode] = useState('Game Display');//change the name, give a more definitive name to the state
+  const [round, setRound] = useState(3); 
+  const [timer, setTimer] = useState(Date.now()); 
+  
+  
+   
 
   return (
       <div>
-        { play === 0 ?
-            <GameScreen setPlay={setPlay} round={round} setRound={setRound}/>
+        { gameMode === 'Game Display' ?
+            <GameScreen setGameMode={setGameMode} round={round}  setRound={setRound}/>
           : ''}
 
-        { play === 1 ?
-           <GamePlay setPlay={setPlay} round={round}/>
+        { gameMode === 'Start Game' ?
+           <GamePlay setGameMode={setGameMode} round={round}/>
           : ''}
         
-        {play === 2 ? 
-           <GameEnd setPlay={setPlay}/>
+        {gameMode === 'End Game' ? 
+           <GameEnd setGameMode={setGameMode} Timer={timer} round={setRound}/>
           : ''}                       
     </div>
   )
