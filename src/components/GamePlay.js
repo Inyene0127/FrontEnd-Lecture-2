@@ -1,67 +1,132 @@
-import React,{useState} from 'react'
+import React,{ useState, useEffect } from 'react'
+import SkipButton from './SkipButton';
+
 
 const GamePlay = (props) => { 
 
-  const [currentProblem, setCurrentProblem] = useState(generateProblem());
+  
   const [userAnswer, setUserAnswer] = useState('');
-  const [prev, setPrev] = useState(1);
+  const [gameCount, setgameCount] = useState(1);
+  const [firstNum, setFirstNum] = useState(null);
+  const [secondNum, setSecondNum] = useState(null);
+  const [operator, setOperator] = useState(null);
+  const [skipGame, setSkipGame] = useState(0);
+  
+  // const [button, setButton] = useState(<button id='btn'>Skip</button>)
+  
+  
+  const time = Date.now();
 
-
+    useEffect(() => {
+        generateProblem();
+    }, []);
+ 
   function generateNumber(max) {
     return Math.floor(Math.random() * max)
   }
 
+ const sign = {
+        
+          signs: ['+' , 'x', '-' ][generateNumber(3)]
+
+  }
+
   function generateProblem() {
-    return {
-      numberOne: generateNumber(10),
-      numberTwo: generateNumber(10),
-      operator: ['+', 'x'][generateNumber(2)] //incase I want to add more operators.
+    
+      setFirstNum(generateNumber(10));
+      setSecondNum(generateNumber(10));
+      setOperator(sign.signs);
     }
+  
+  const evaluate = (firstNum, secondNum, operator) => {
+      if (operator == '+') {
+        return firstNum + secondNum;
+      }
+      else if (operator == 'x') {
+        return firstNum * secondNum;
+      }
+      else if (operator == '-') {
+        return firstNum - secondNum;
+      }
   }
+  
+  
+  
 
-  let correctAnswer;
-  if (currentProblem.operator == "+") {
-    correctAnswer = currentProblem.numberOne + currentProblem.numberTwo
-  }
-  else if (currentProblem.operator == "x") {
-    correctAnswer = currentProblem.numberOne * currentProblem.numberTwo
-  };
-
+  
     const Submit = (event) => {
       event.preventDefault();
-      const validAnswer = userAnswer >= 0;
-          if (!validAnswer) {
-            alert('Input a positive number please') ;}
-            if (correctAnswer == parseInt(userAnswer)) {
-              setPrev((prev) => prev + 1);
-              if (prev == props.round) {
-                props.setPlay(2);
-              }
-              setUserAnswer("");
-              setCurrentProblem(generateProblem());
-            }
-              
-              
-            
-          
-        } 
+      
+      const correctAnswer = evaluate(firstNum, secondNum, operator);
+      console.log(correctAnswer);
+       
+       if ( (userAnswer.toString().length == correctAnswer.toString().length) && (gameCount < props.round) ) {
+       
+        props.setPlayedRounds(() => [...props.playedRounds, {
+          id: Math.random(),
+          firstNum: firstNum,
+          secondNum: secondNum,
+          correctAnswer: correctAnswer,
+          operator: operator,
+          userAnswer: userAnswer,
+          time: Date.now()-time,
+          speed: Math.floor((Date.now()-time)/1000) < 3
+      }]);
+
+        setUserAnswer('');
+        setgameCount((gameCount) => gameCount + 1);
+        generateProblem();      
+       }
+       else if ( (userAnswer.toString().length === correctAnswer.toString().length) && gameCount == props.round ) {
+      
+        props.setPlayedRounds(() => [...props.playedRounds, {
+          id: Math.random(),
+          firstNum: firstNum,
+          secondNum: secondNum,
+          correctAnswer: correctAnswer,
+          operator: operator,
+          userAnswer: userAnswer,
+          time: Date.now()-time,
+          speed: Math.floor((Date.now()-time)/1000) < 3
+      }]);
+      
+      setSkipGame(0);
+      props.setGameMode('End Game'); 
+      
+    }
+  };
+  
+
+    const handleSkip = () => {
+
+      setSkipGame(skipGame + 1)    
+      setgameCount((gameCount) => gameCount + 1);
+      generateProblem();
+         
+                
+    };
+      
+
+
+
+    
+    
+    
+         
 
   
 
   return (
-    <div>
-        <div id='second_container' className='second_header'>
-          <div>
-            <form onSubmit={Submit}>
-      <h1 id='numbers'>{`${currentProblem.numberOne} ${currentProblem.operator} ${currentProblem.numberTwo}`}</h1>
-      <input id="inputAns" value={userAnswer} onChange={(e) => setUserAnswer(e.target.value)}/>
-      <button id='btn_1' type='submit'>Submit</button>
-      </form>
-          </div>
+          <div id='container' className='header'>
+            <h1>{firstNum} {operator} {secondNum}</h1>
+              <form onSubmit={Submit}>
+                <input className="inputVal" value={userAnswer} onChange={(e) => setUserAnswer((e.target.value))} autoFocus/>
+                  <button id='btn' type='submit'>Submit</button>
+              </form>
+              {skipGame < Math.floor(props.round/3) ? <SkipButton onClick={handleSkip}/> : null}
+              
         </div>
-    </div>
   )
 }
 
 export default GamePlay
-
