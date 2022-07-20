@@ -1,25 +1,78 @@
-import React, {useState} from 'react'
-import GameScreen from './GameScreen'
-import GamePlay from './GamePlay'
-import GameEnd from './GameEnd'
+import React, {useState, useReducer} from 'react'
+import GameScreen from './components/GameScreen'
+import GamePlay from './components/GamePlay'
+import GameEnd from './components/GameEnd'
+import GamePlayed from './GamePlayed'
+// import {
+//   reducer,
+//   changeGameMode,
+//   changeRound,
+//   startTimer,
+//   initializer
+// } from './hooks/Reducer';
 
 const App = () => {
-  const [play, setPlay] = useState(0);
-  const [round, setRound] = useState('3');   
 
+  // const [state, dispatch] = useReducer(reducer,undefined, initializer);
+  // const game = {
+  //   start: "start",
+  //   play: 'play',
+  //   end: 'end'
+  // }
+
+  // const setGameMode = (gameMode) => dispatch(changeGameMode(gameMode));
+  // const setRound = (round) => dispatch(changeRound(round));
+  // const setTimer = () => dispatch(startTimer()); 
+
+
+
+
+
+
+
+  const [gameMode, setGameMode] = useState('Game Display');//change the name, give a more definitive name to the state
+  const [round, setRound] = useState(3); 
+  const [timer, setTimer] = useState(Date.now());
+  const [gameHistory, setGameHistory] = useState([]); 
+  const [playedRounds, setPlayedRounds] = useState([]);
+  
+  
+  
   return (
-      <div>
-        { play === 0 ?
-            <GameScreen setPlay={setPlay} round={round} setRound={setRound}/>
+      <div> 
+        
+        { gameMode === 'End Game' && gameHistory.map((item) => {
+          return (
+            <div key={item.id}>
+              <h1>Last Game</h1>
+              {
+                item.map((rounds) => (
+                  <GamePlayed {...rounds}/>
+                ))}
+            </div>
+          );
+        })}
+
+        { playedRounds.map((rounds) => ( 
+          <div key={rounds.id} className='game_history'> 
+          <GamePlayed {...rounds}/>
+            </div>
+             ))}
+
+         
+    
+        { gameMode === 'Game Display' ?
+            <GameScreen setGameMode={setGameMode} round={round}  setRound={setRound} />
           : ''}
 
-        { play === 1 ?
-           <GamePlay setPlay={setPlay} round={round}/>
+        { gameMode === 'Start Game' ?
+           <GamePlay setGameMode={setGameMode} round={round} playedRounds={playedRounds} setPlayedRounds={setPlayedRounds} timer={timer} gameHistory={gameHistory} setGameHistory={setGameHistory} />
           : ''}
         
-        {play === 2 ? 
-           <GameEnd setPlay={setPlay}/>
+        { gameMode === 'End Game' ? 
+           <GameEnd setGameMode={setGameMode} Timer={timer} round={setRound} setPlayedRounds={setPlayedRounds} playedRounds={playedRounds} gameHistory={gameHistory} setGameHistory={setGameHistory} />
           : ''}                       
+          
     </div>
   )
 }
