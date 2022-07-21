@@ -3,7 +3,7 @@ import React,{ useState } from 'react';
 
 const GameScreen = (props) => {
 
-  const {round} = props.state
+  // const {round} = props.state
   
   const handleChange = ({ target }) => {
 
@@ -16,7 +16,6 @@ const GameScreen = (props) => {
    const handleClick = () => {
     props.setGameMode('Start Game');
    }
-   
   return (
     <div id='container' className='header'>
       <p>Hi, this is Inyene's math game, choose your parameters and get to calculating!"</p>
