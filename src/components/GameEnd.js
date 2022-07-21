@@ -1,17 +1,33 @@
-import React,{useState} from 'react'
+import React,{ useState, useEffect } from 'react'
+
 
 const GameEnd = (props) => {
 
-  const {setPlay} = props
+  const timeSpent = Date.now() - props.Timer;
+  
+    const handleRepeat = () => { 
+      props.setGameHistory([...props.gameHistory, props.playedRounds]);      
+      props.setPlayedRounds([]);
+      props.setGameCount(1);
+      props.round(props.rounds)
+      props.setGameMode('Start Game'); 
+    };
 
-  const replayGame = () => {
-    setPlay(0)
-  }
+
+  const handleClick=(e) => {  
+    props.setPlayedRounds([]); 
+    props.setGameCount(1);
+    props.setGameMode('Game Display');
+    // props.round(3);
+};
+
+  
   return (
-    <div id='third_container' className='.third_header'>
-      <h1 id="game_over">Game Over</h1>
-        <h2 id="time_spent">Time spent:{Date.now()} ms.</h2>
-        <button id='try_again' onClick={replayGame}>Try Again</button>
+    <div id='container' className='header'>
+      <h1>Game Over</h1>
+        <h2 className="time_spent">Time Spent:{timeSpent} milliseconds.</h2>
+        <button id='btn' onClick={handleRepeat}>New Game</button>
+        <button id='btn' onClick={handleClick}>Home</button>             
     </div>
   )
 }
