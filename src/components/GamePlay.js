@@ -4,9 +4,8 @@ import SkipButton from './SkipButton';
 
 const GamePlay = (props) => { 
 
-  
+  const {gameCount, setGameCount} = props
   const [userAnswer, setUserAnswer] = useState('');
-  const [gameCount, setgameCount] = useState(1);
   const [firstNum, setFirstNum] = useState(null);
   const [secondNum, setSecondNum] = useState(null);
   const [operator, setOperator] = useState(null);
@@ -58,7 +57,7 @@ const GamePlay = (props) => {
       event.preventDefault();
       
       const correctAnswer = evaluate(firstNum, secondNum, operator);
-      console.log(correctAnswer);
+      // console.log(correctAnswer);
        
        if ( (userAnswer.toString().length == correctAnswer.toString().length) && (gameCount < props.round) ) {
        
@@ -72,9 +71,8 @@ const GamePlay = (props) => {
           time: Date.now()-time,
           speed: Math.floor((Date.now()-time)/1000) < 3
       }]);
-
         setUserAnswer('');
-        setgameCount((gameCount) => gameCount + 1);
+        setGameCount((gameCount) => gameCount + 1);
         generateProblem();      
        }
        else if ( (userAnswer.toString().length === correctAnswer.toString().length) && gameCount == props.round ) {
@@ -89,7 +87,6 @@ const GamePlay = (props) => {
           time: Date.now()-time,
           speed: Math.floor((Date.now()-time)/1000) < 3
       }]);
-      
       setSkipGame(0);
       props.setGameMode('End Game'); 
       
@@ -100,7 +97,7 @@ const GamePlay = (props) => {
     const handleSkip = () => {
 
       setSkipGame(skipGame + 1)    
-      setgameCount((gameCount) => gameCount + 1);
+      setGameCount((gameCount) => gameCount + 1);
       generateProblem();
          
                 
