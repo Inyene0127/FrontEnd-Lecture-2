@@ -30,47 +30,49 @@ const App = () => {
 
 
 
+  const [gameCount, setGameCount] = useState(1);
   const [gameMode, setGameMode] = useState('Game Display');//change the name, give a more definitive name to the state
   const [round, setRound] = useState(3); 
   const [timer, setTimer] = useState(Date.now());
   const [gameHistory, setGameHistory] = useState([]); 
   const [playedRounds, setPlayedRounds] = useState([]);
+
+
   
   
   
   return (
       <div> 
         
-        { gameMode === 'End Game' && gameHistory.map((item) => {
-          return (
-            <div key={item.id}>
-              <h1>Last Game</h1>
-              {
-                item.map((rounds) => (
-                  <GamePlayed {...rounds}/>
-                ))}
-            </div>
-          );
-        })}
+        { gameMode === 'End Game' && gameHistory.map((history, index) => {
+                return (
+                  <div key={Date.now()}>
+                    <h4>Game {index + 1}</h4>
+                    {
+                      history.map((rounds) => (
+                        <GamePlayed {...rounds}/>
+                      ))}
+                  </div>
+                )})
+            }
 
-        { playedRounds.map((rounds) => ( 
+        { playedRounds.map((rounds) => {
+          return (
           <div key={rounds.id} className='game_history'> 
           <GamePlayed {...rounds}/>
             </div>
-             ))}
-
-         
+             )})}         
     
         { gameMode === 'Game Display' ?
             <GameScreen setGameMode={setGameMode} round={round}  setRound={setRound} />
           : ''}
 
         { gameMode === 'Start Game' ?
-           <GamePlay setGameMode={setGameMode} round={round} playedRounds={playedRounds} setPlayedRounds={setPlayedRounds} timer={timer} gameHistory={gameHistory} setGameHistory={setGameHistory} />
+           <GamePlay setGameMode={setGameMode} round={round} playedRounds={playedRounds} setPlayedRounds={setPlayedRounds} timer={timer} gameHistory={gameHistory} setGameHistory={setGameHistory} gameCount={gameCount} setGameCount={setGameCount}/>
           : ''}
         
         { gameMode === 'End Game' ? 
-           <GameEnd setGameMode={setGameMode} Timer={timer} round={setRound} setPlayedRounds={setPlayedRounds} playedRounds={playedRounds} gameHistory={gameHistory} setGameHistory={setGameHistory} />
+           <GameEnd setGameMode={setGameMode} Timer={timer} round={setRound} rounds={round} setPlayedRounds={setPlayedRounds} playedRounds={playedRounds} gameHistory={gameHistory} setGameHistory={setGameHistory} gameCount={gameCount} setGameCount={setGameCount}/>
           : ''}                       
           
     </div>
