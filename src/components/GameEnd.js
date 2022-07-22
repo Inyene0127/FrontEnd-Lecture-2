@@ -3,10 +3,14 @@ import React,{ useState, useEffect } from 'react'
 
 const GameEnd = (props) => {
 
+  const handleGameHistory = () => {
+    props.setGameHistory([...props.gameHistory, props.playedRounds]); 
+  }
+
   const timeSpent = Date.now() - props.Timer;
   
     const handleRepeat = () => { 
-      props.setGameHistory([...props.gameHistory, props.playedRounds]);      
+       handleGameHistory();    
       props.setPlayedRounds([]);
       props.setGameCount(1);
       props.round(props.rounds)
@@ -15,6 +19,7 @@ const GameEnd = (props) => {
 
 
   const handleClick=(e) => {  
+    handleGameHistory();
     props.setPlayedRounds([]); 
     props.setGameCount(1);
     props.setGameMode('Game Display');
