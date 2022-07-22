@@ -26,14 +26,14 @@ const GamePlay = (props) => {
 
  const sign = {
         
-          signs: ['+' , 'x', '-' ][generateNumber(3)]
+          signs: ['+' , 'x', '-', '/' ][generateNumber(4)]
 
   }
 
   function generateProblem() {
     
-      setFirstNum(generateNumber(10));
-      setSecondNum(generateNumber(10));
+      setFirstNum(generateNumber(20));
+      setSecondNum(generateNumber(20));
       setOperator(sign.signs);
     }
   
@@ -46,6 +46,9 @@ const GamePlay = (props) => {
       }
       else if (operator == '-') {
         return firstNum - secondNum;
+      }
+      else if (operator == '/') {
+        return Math.floor(firstNum / secondNum);
       }
   }
   
