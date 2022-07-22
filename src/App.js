@@ -37,17 +37,14 @@ const App = () => {
   const [gameHistory, setGameHistory] = useState([]); 
   const [playedRounds, setPlayedRounds] = useState([]);
 
-
-  
-  
   
   return (
       <div> 
         
         { gameMode === 'End Game' && gameHistory.map((history, index) => {
                 return (
-                  <div key={Date.now()}>
-                    <h4>Game {index + 1}</h4>
+                  <div>
+                    <h4 key={Date.now()}>Game {index + 1}</h4>
                     {
                       history.map((rounds) => (
                         <GamePlayed {...rounds}/>
