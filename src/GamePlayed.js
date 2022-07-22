@@ -7,7 +7,7 @@ const GamePlayed = (props) => {
 
   return (
     <div>
-        <Styling userAnswer={userAnswer} correctAnswer={correctAnswer} $speed={speed}>
+        <Styling userAnswer={userAnswer} correctAnswer={correctAnswer} speed={`${speed}`}>
             <p>{firstNum} {operator} {secondNum} [{time}]ms = {userAnswer}</p>
         </Styling>
     </div>
