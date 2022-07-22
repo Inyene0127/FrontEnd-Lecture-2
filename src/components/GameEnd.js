@@ -1,40 +1,21 @@
-import React,{ useState, useEffect } from 'react'
-
+import React from "react";
 
 const GameEnd = (props) => {
+  const { handleRepeat, handleRestart } = props;
+  const timeSpent = Date.now() - props.timer;
 
-  const handleGameHistory = () => {
-    props.setGameHistory([...props.gameHistory, props.playedRounds]); 
-  }
-
-  const timeSpent = Date.now() - props.Timer;
-  
-    const handleRepeat = () => { 
-       handleGameHistory();    
-      props.setPlayedRounds([]);
-      props.setGameCount(1);
-      props.round(props.rounds)
-      props.setGameMode('Start Game'); 
-    };
-
-
-  const handleClick=(e) => {  
-    handleGameHistory();
-    props.setPlayedRounds([]); 
-    props.setGameCount(1);
-    props.setGameMode('Game Display');
-    // props.round(3);
+  return (
+    <div id="container" className="header">
+      <h1>Game Over</h1>
+      <h2 className="time_spent">Time Spent:{timeSpent} milliseconds.</h2>
+      <button id="btn" onClick={handleRepeat}>
+        New Game
+      </button>
+      <button id="btn" onClick={handleRestart}>
+        Home
+      </button>
+    </div>
+  );
 };
 
-  
-  return (
-    <div id='container' className='header'>
-      <h1>Game Over</h1>
-        <h2 className="time_spent">Time Spent:{timeSpent} milliseconds.</h2>
-        <button id='btn' onClick={handleRepeat}>New Game</button>
-        <button id='btn' onClick={handleClick}>Home</button>             
-    </div>
-  )
-}
-
-export default GameEnd
+export default GameEnd;
