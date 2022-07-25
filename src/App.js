@@ -11,6 +11,12 @@ import GamePlayed from './GamePlayed'
 //   initializer
 // } from './hooks/Reducer';
 
+const GAME_MODES = {
+  GAME_DISPLAY: 'Game Display',
+  GAME_START: 'Start Game',
+  GAME_END: 'End Game'
+}
+
 const App = () => {
 
   // const [state, dispatch] = useReducer(reducer,undefined, initializer);
@@ -41,7 +47,7 @@ const App = () => {
   return (
       <div> 
         
-        { gameMode === 'End Game' && gameHistory.map((history, index) => {
+        { gameMode === GAME_MODES.GAME_END && gameHistory.map((history, index) => {
                 return (
                   <div>
                     <h4 key={Date.now()}>Game {index + 1}</h4>
@@ -60,15 +66,15 @@ const App = () => {
             </div>
              )})}         
     
-        { gameMode === 'Game Display' ?
+        { gameMode === GAME_MODES.GAME_DISPLAY ?
             <GameScreen setGameMode={setGameMode} round={round}  setRound={setRound} />
           : ''}
 
-        { gameMode === 'Start Game' ?
+        { gameMode === GAME_MODES.GAME_START ?
            <GamePlay setGameMode={setGameMode} round={round} playedRounds={playedRounds} setPlayedRounds={setPlayedRounds} timer={timer} gameHistory={gameHistory} setGameHistory={setGameHistory} gameCount={gameCount} setGameCount={setGameCount}/>
           : ''}
         
-        { gameMode === 'End Game' ? 
+        { gameMode === GAME_MODES.GAME_END ? 
            <GameEnd setGameMode={setGameMode} Timer={timer} round={setRound} rounds={round} setPlayedRounds={setPlayedRounds} playedRounds={playedRounds} gameHistory={gameHistory} setGameHistory={setGameHistory} gameCount={gameCount} setGameCount={setGameCount}/>
           : ''}                       
           
