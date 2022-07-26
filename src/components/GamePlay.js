@@ -1,129 +1,97 @@
 import React,{ useState, useEffect } from 'react'
 import SkipButton from './SkipButton';
+import { generateNumber } from '../utils';
+import { evaluate } from '../utils';
+import { generateProblem } from '../utils';
+import { GAME_MODES } from '../App';
+
+
 
 
 const GamePlay = (props) => { 
-
-  const {gameCount, setGameCount} = props
+  
+  
+  const [gameCount, setGameCount] = useState(1);
+  const [correctAnswer, setCorrectAnswer] = useState('');
+  const [question, setQuestion] = useState(0);
   const [userAnswer, setUserAnswer] = useState('');
-  const [firstNum, setFirstNum] = useState(null);
-  const [secondNum, setSecondNum] = useState(null);
-  const [operator, setOperator] = useState(null);
   const [skipGame, setSkipGame] = useState(0);
+  const [time, setTime] = useState(Date.now())
+
+  const {round, handlePlayedRoundsDisplay, setGameMode} = props
   
   // const [button, setButton] = useState(<button id='btn'>Skip</button>)
   
   
-  const time = Date.now();
+  // const time = Date.now();
 
+  const timeDifference = Math.floor(Date.now() - time) / 1000;
+  
+    const playedRoundsObject = {
+
+      id: Math.random(),
+      question: question,
+      correctAnswer: correctAnswer,
+      userAnswer: userAnswer,
+      time: Date.now()-time,
+      speed: timeDifference < 3
+
+  }
+    const reset = () => {
+
+      setUserAnswer('');
+      setCorrectAnswer('');
+      setQuestion('')
+      setGameCount((gameCount) => gameCount + 1);
+      getProblem(); 
+      setTime(Date.now());  
+
+  }
     useEffect(() => {
-        generateProblem();
+        getProblem();
     }, []);
- 
-  function generateNumber(max) {
-    return Math.floor(Math.random() * max)
-  }
 
- const sign = {
-        
-          signs: ['+' , 'x', '-', '/' ][generateNumber(4)]
 
-  }
-
-  function generateProblem() {
-    
-      setFirstNum(generateNumber(20));
-      setSecondNum(generateNumber(20));
-      setOperator(sign.signs);
+    const getProblem = () => {
+      const problem = generateProblem();
+      setCorrectAnswer(problem.correctAnswer);
+      setQuestion(problem.question);
     }
   
-  const evaluate = (firstNum, secondNum, operator) => {
-      if (operator == '+') {
-        return firstNum + secondNum;
-      }
-      else if (operator == 'x') {
-        return firstNum * secondNum;
-      }
-      else if (operator == '-') {
-        return firstNum - secondNum;
-      }
-      else if (operator == '/') {
-        return Math.floor(firstNum / secondNum);
-      }
-  }
   
-  
-  
+    const submitForm = (event) => {
 
-  
-    const Submit = (event) => {
-      event.preventDefault();
-      
-      const correctAnswer = evaluate(firstNum, secondNum, operator);
-      // console.log(correctAnswer);
+      event.preventDefault();    
        
-       if ( (userAnswer.toString().length == correctAnswer.toString().length) && (gameCount < props.round) ) {
-       
-        props.setPlayedRounds(() => [...props.playedRounds, {
-          id: Math.random(),
-          firstNum: firstNum,
-          secondNum: secondNum,
-          correctAnswer: correctAnswer,
-          operator: operator,
-          userAnswer: userAnswer,
-          time: Date.now()-time,
-          speed: Math.floor((Date.now()-time)/1000) < 3
-      }]);
-        setUserAnswer('');
-        setGameCount((gameCount) => gameCount + 1);
-        generateProblem();      
+       if ( (userAnswer.toString().length == correctAnswer.toString().length) && (gameCount < round) ) {
+        handlePlayedRoundsDisplay(playedRoundsObject);  
+        reset();    
        }
-       else if ( (userAnswer.toString().length === correctAnswer.toString().length) && gameCount == props.round ) {
-      
-        props.setPlayedRounds(() => [...props.playedRounds, {
-          id: Math.random(),
-          firstNum: firstNum,
-          secondNum: secondNum,
-          correctAnswer: correctAnswer,
-          operator: operator,
-          userAnswer: userAnswer,
-          time: Date.now()-time,
-          speed: Math.floor((Date.now()-time)/1000) < 3
-      }]);
-      setSkipGame(0);
-      props.setGameMode('End Game'); 
-      
-    }
+       else if ( (userAnswer.toString().length === correctAnswer.toString().length) && gameCount == round ) {
+        handlePlayedRoundsDisplay(playedRoundsObject)
+        setSkipGame(0);
+        setGameMode(GAME_MODES.GAME_END);
+        setGameCount(1);
+      }
   };
   
 
     const handleSkip = () => {
-
       setSkipGame(skipGame + 1)    
       setGameCount((gameCount) => gameCount + 1);
-      generateProblem();
-         
-                
+      getProblem();        
     };
       
-
-
-
-    
-    
-    
-         
-
   
 
   return (
           <div id='container' className='header'>
-            <h1>{firstNum} {operator} {secondNum}</h1>
-              <form onSubmit={Submit}>
+            <h1>{question}</h1>
+              <form onSubmit={submitForm}>
                 <input className="inputVal" value={userAnswer} onChange={(e) => setUserAnswer((e.target.value))} autoFocus/>
                   <button id='btn' type='submit'>Submit</button>
               </form>
-              {skipGame < Math.floor(props.round/3) ? <SkipButton onClick={handleSkip}/> : null}
+              {skipGame < Math.floor(round/3) && <SkipButton onClick={handleSkip}/>}
               
         </div>
   )

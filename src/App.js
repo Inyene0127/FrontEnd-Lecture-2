@@ -11,11 +11,12 @@ import GamePlayed from './GamePlayed'
 //   initializer
 // } from './hooks/Reducer';
 
-const GAME_MODES = {
+export const GAME_MODES = {
   GAME_DISPLAY: 'Game Display',
   GAME_START: 'Start Game',
   GAME_END: 'End Game'
 }
+
 
 const App = () => {
 
@@ -31,34 +32,50 @@ const App = () => {
   // const setTimer = () => dispatch(startTimer()); 
 
 
-
-
-
-
-
-  const [gameCount, setGameCount] = useState(1);
+  
   const [gameMode, setGameMode] = useState('Game Display');//change the name, give a more definitive name to the state
   const [round, setRound] = useState(3); 
   const [timer, setTimer] = useState(Date.now());
   const [gameHistory, setGameHistory] = useState([]); 
   const [playedRounds, setPlayedRounds] = useState([]);
 
-  
+  const handlePlayedRoundsDisplay = (playedRoundsObject) => {
+    setPlayedRounds(() => [...playedRounds, playedRoundsObject]);
+  }
+
+  const handleGameHistory = () => {
+    setGameHistory([...gameHistory,playedRounds]); 
+  }
+
+  const handleRestart = () => { 
+    handleGameHistory();    
+    setPlayedRounds([]);
+    setRound(round)
+    setGameMode(GAME_MODES.GAME_START);
+    setTimer(Date.now()) 
+ };
+
+ const handleClick=(e) => {  
+  handleGameHistory();
+  setPlayedRounds([]); 
+  setGameMode('Game Display');
+  setTimer(Date.now())
+};
   return (
       <div> 
-        
+        {/*total game round played */}
         { gameMode === GAME_MODES.GAME_END && gameHistory.map((history, index) => {
                 return (
-                  <div>
-                    <h4 key={Date.now()}>Game {index + 1}</h4>
+                  <div key={index}>
+                    <h4 >Game {index + 1}</h4>
                     {
-                      history.map((rounds) => (
-                        <GamePlayed {...rounds}/>
+                      history.map((rounds, index) => (
+                        <GamePlayed key={index} {...rounds}/>
                       ))}
                   </div>
                 )})
             }
-
+         {/*current concluded game round */}
         { playedRounds.map((rounds) => {
           return (
           <div key={rounds.id} className='game_history'> 
@@ -66,17 +83,16 @@ const App = () => {
             </div>
              )})}         
     
-        { gameMode === GAME_MODES.GAME_DISPLAY ?
-            <GameScreen setGameMode={setGameMode} round={round}  setRound={setRound} />
-          : ''}
+        { gameMode === GAME_MODES.GAME_DISPLAY &&
+            <GameScreen setGameMode={setGameMode} round={round}  setRound={setRound} />}
 
-        { gameMode === GAME_MODES.GAME_START ?
-           <GamePlay setGameMode={setGameMode} round={round} playedRounds={playedRounds} setPlayedRounds={setPlayedRounds} timer={timer} gameHistory={gameHistory} setGameHistory={setGameHistory} gameCount={gameCount} setGameCount={setGameCount}/>
-          : ''}
+        { gameMode === GAME_MODES.GAME_START &&
+           <GamePlay setGameMode={setGameMode} round={round} handlePlayedRoundsDisplay={handlePlayedRoundsDisplay}/>
+          }
         
-        { gameMode === GAME_MODES.GAME_END ? 
-           <GameEnd setGameMode={setGameMode} Timer={timer} round={setRound} rounds={round} setPlayedRounds={setPlayedRounds} playedRounds={playedRounds} gameHistory={gameHistory} setGameHistory={setGameHistory} gameCount={gameCount} setGameCount={setGameCount}/>
-          : ''}                       
+        { gameMode === GAME_MODES.GAME_END && 
+           <GameEnd timer={timer} handleClick={handleClick} handleRestart={handleRestart}/>
+          }                       
           
     </div>
   )
