@@ -5,23 +5,25 @@ const GamePlayed = (props) => {
   const { question, userAnswer, time, correctAnswer, speed } = props;
 
   const hasIncorrectAnswer = userAnswer != correctAnswer;
-  const hasCorrectAnswerOnTime =
-    userAnswer === correctAnswer?.toString() && speed;
+  const hasCorrectAnswerInTime =
+    userAnswer === correctAnswer.toString() && speed;
 
-  let colorClass = "correct__answer--outTime";
+  let colorClass = "correct_answer--outTime";
 
   if (hasIncorrectAnswer) {
-    colorClass = "incorrect__answer";
-  } else if (hasCorrectAnswerOnTime) {
-    colorClass = "correct__answer--inTime";
+    colorClass = "incorrect_answer";
+  } else if (hasCorrectAnswerInTime) {
+    colorClass = "correct_answer--inTime";
   }
 
   return (
-    <Styling className={colorClass}>
-      <p>
-        {question} [{time}]ms = {userAnswer}
-      </p>
-    </Styling>
+    <div>
+      <Styling className={colorClass}>
+        <p>
+          {question} [{time}]ms = {userAnswer}
+        </p>
+      </Styling>
+    </div>
   );
 };
 

@@ -1,20 +1,19 @@
 import React, { useState } from "react";
-import { GAME_MODES } from "../App";
+import { GAME_MODES } from "../utils/constants";
 
 const GameScreen = (props) => {
   const { round, setGameMode, setRound } = props;
 
   const handleChange = ({ target }) => {
     const newRound = target.value;
-
-    // Validating user round input
+    //Validates that the user input a round within 1-20
     if (newRound >= 1 && newRound <= 20) {
       setRound(newRound);
     }
   };
 
   const handleClick = () => {
-    setGameMode(GAME_MODES.START_GAME);
+    setGameMode(GAME_MODES.GAME_START);
   };
 
   return (

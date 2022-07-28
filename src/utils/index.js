@@ -1,6 +1,6 @@
-const operator = ["+", "x", "-", "/"];
+export const operator = ["+", "x", "-", "/"];
 
-const sign = {
+export const sign = {
   signs: operator[generateNumber(operator.length)],
 };
 
@@ -26,7 +26,6 @@ export function generateProblem() {
   const operator = sign.signs;
 
   const correctAnswer = evaluate(firstNumber, secondNumber, operator);
-
   const question = `${firstNumber} ${operator} ${secondNumber}`;
 
   return {
