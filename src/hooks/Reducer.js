@@ -24,7 +24,6 @@ export const startTimer = () => ({
 
 export const initializer = () => ({
   round: 3,
-  count: 1,
   time: null,
 });
 
