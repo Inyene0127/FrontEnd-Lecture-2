@@ -19,11 +19,7 @@ const GamePlay = (props) => {
   const [time, setTime] = useState(Date.now())
 
   const {round, handlePlayedRoundsDisplay, setGameMode} = props
-  
-  // const [button, setButton] = useState(<button id='btn'>Skip</button>)
-  
-  
-  // const time = Date.now();
+
 
   const timeDifference = Math.floor(Date.now() - time) / 1000;
   

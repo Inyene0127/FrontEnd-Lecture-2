@@ -1,21 +1,18 @@
+import { DISPATCH_ACTIONS } from "../utils/constants";
+
 export const changeGameMode = (newGameMode) => ({
-      type: "changeGameMode",
+      type: DISPATCH_ACTIONS.CHANGE_GAMEMODE,
       payload: newGameMode
 });
 
 export const changeRound = (newRound) => ({
-  type: 'changeRound',
+  type: DISPATCH_ACTIONS.CHANGE_ROUND,
   payload: newRound
 });
 
 export const startTimer = () => ({
-  type: 'startTimer'
+  type: DISPATCH_ACTIONS.START_TIMER
 });
-
-// export const changeGameHistory = (newGameHistory) => ({
-//   type: 'changeGameHistory',
-//   payload: newGameHistory
-// });
 
 // export const changePlayedRounds = (newPlayedRounds) => ({
 //   type: 'changePlayedRounds',
@@ -44,11 +41,11 @@ const setTimer = (state) => ({
 
 export const reducer = (state, action) => {
   switch (action.type) {
-    case 'changeGameMode':
+    case DISPATCH_ACTIONS.CHANGE_GAMEMODE:
       return setGameMode(state, action.payload);
-    case 'changeRound':
+    case DISPATCH_ACTIONS.CHANGE_ROUND:
       return setRound(state, action.payload);
-    case 'startTimer':
+    case DISPATCH_ACTIONS.START_TIMER:
         return setTimer(state, action.payload);
     default:
       throw new Error("Invalid");
