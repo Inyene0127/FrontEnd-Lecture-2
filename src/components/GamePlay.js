@@ -3,7 +3,7 @@ import SkipButton from './SkipButton';
 import { generateNumber } from '../utils';
 import { evaluate } from '../utils';
 import { generateProblem } from '../utils';
-import { GAME_MODES } from '../App';
+import { GAME_MODES } from '../utils/constants'
 
 
 

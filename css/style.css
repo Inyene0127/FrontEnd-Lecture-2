@@ -49,12 +49,16 @@ p{
   text-align: left;
   padding: 10px;
 }
+h2{
+  text-align: center;
+  margin-top: 10px;
+}
 #container{
   justify-content: center;
   width: 40%;
   min-width: 450px;
   position: relative;
-  transform: translate(-50%, 50%);
+  transform: translate(-50%, 11%);
   left: 200px;
   background: white;
   border-radius: 10px;
@@ -76,4 +80,14 @@ p{
   display: grid;
   grid-template-columns: 3fr 3fr 3fr 1fr;
 
+}
+.total_history{
+  margin-top: 35px;
+  background-color:#958888;
+  opacity: 20;
+  /* padding: 30px 40px 30px 40px; */
+  text-align: center;
+  display: grid;
+  grid-template-columns: 3fr 3fr 3fr 1fr;
+  
 }

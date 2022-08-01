@@ -1,5 +1,5 @@
 import React,{ useState } from 'react';
-import { GAME_MODES } from '../App';
+import { GAME_MODES } from '../utils/constants'
 
 
 const GameScreen = (props) => {

@@ -3,37 +3,42 @@ import GameScreen from './components/GameScreen'
 import GamePlay from './components/GamePlay'
 import GameEnd from './components/GameEnd'
 import GamePlayed from './GamePlayed'
+import { GAME_MODES } from './utils/constants'
 import {
   reducer,
   changeGameMode,
   changeRound,
   startTimer,
-  initializer
+  initialState,
+  changePlayedRounds
 } from './hooks/reducer';
+import GameHistory from './components/GameHistory'
 
-export const GAME_MODES = {
-  GAME_DISPLAY: 'Game Display',
-  GAME_START: 'Start Game',
-  GAME_END: 'End Game'
-}
 
 
 const App = () => {
 
-  const [state, dispatch] = useReducer(reducer,undefined, initializer);
+  const [state, dispatch] = useReducer(reducer,undefined, initialState);
  
 
   const setGameMode = (gameMode) => dispatch(changeGameMode(gameMode));
   const setRound = (round) => dispatch(changeRound(round));
   const setTimer = () => dispatch(startTimer()); 
+  const setPlayedRounds = (playedRounds) => dispatch(changePlayedRounds(playedRounds))
+  const {playedRounds} = state
+  //
 
   //state that handles the array for the total rounds played
   const [gameHistory, setGameHistory] = useState([]); 
-  //state that handles the array for the round just played.
-  const [playedRounds, setPlayedRounds] = useState([]);
 
+  const miniReset = () => {
+    handleGameHistory();    
+    setPlayedRounds([]);
+    setTimer(Date.now()) 
+  }
+  
   const handlePlayedRoundsDisplay = (playedRoundsObject) => {
-    setPlayedRounds(() => [...playedRounds, playedRoundsObject]);
+    setPlayedRounds([...playedRounds, playedRoundsObject]);
   }
 
   const handleGameHistory = () => {
@@ -41,33 +46,18 @@ const App = () => {
   }
 
   const handleRestart = () => { 
-    handleGameHistory();    
-    setPlayedRounds([]);
     setRound(state.round)
     setGameMode(GAME_MODES.GAME_START);
-    setTimer(Date.now()) 
+    miniReset()
+    
  };
 
- const handleClick=(e) => {  
-  handleGameHistory();
-  setPlayedRounds([]); 
+ const handleHome=(e) => {  
+  miniReset()
   setGameMode('Game Display');
-  setTimer(Date.now())
 };
   return (
       <div> 
-        {/*total game round played */}
-        { state.gameMode === GAME_MODES.GAME_END && gameHistory.map((history, index) => {
-                return (
-                  <div key={index}>
-                    <h4 >Game {index + 1}</h4>
-                    {
-                      history.map((rounds, index) => (
-                        <GamePlayed key={index} {...rounds}/>
-                      ))}
-                  </div>
-                )})
-            }
          {/*current concluded game round */}
         { playedRounds.map((rounds) => {
           return (
@@ -84,8 +74,14 @@ const App = () => {
           }
         
         { state.gameMode === GAME_MODES.GAME_END && 
-           <GameEnd timer={state.timer} handleClick={handleClick} handleRestart={handleRestart}/>
-          }                       
+           <GameEnd timer={state.timer} handleHome={handleHome} handleRestart={handleRestart}/>
+          } 
+        
+        {/*total game round played */}
+        { state.gameMode === GAME_MODES.GAME_END && 
+        <GameHistory gameHistory={gameHistory} />
+            } 
+                     
           
     </div>
   )
