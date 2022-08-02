@@ -46,14 +46,18 @@ export function generateProblemSec(question) {
 }
 
 export const http = async ({ url, method = "GET", body }) => {
-  const req = await fetch(`http://localhost:8081${url}`, {
-    method,
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(body),
-  });
+  try {
+    const req = await fetch(`http://localhost:8081${url}`, {
+      method,
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(body),
+    });
 
-  const response = await req.json();
-  return response;
+    const response = await req.json();
+    return response;
+  } catch (e) {
+    console.log(e);
+  }
 };
