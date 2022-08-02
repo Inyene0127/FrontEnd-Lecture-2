@@ -20,6 +20,7 @@ export const initialState = {
   timer: null,
   gameMode: GAME_MODES.GAME_DISPLAY,
   playedRounds: [],
+  currentQuestion: null,
 };
 
 // Dispatch
@@ -35,6 +36,10 @@ export const changeRound = (newRound) => ({
 export const changePlayedRounds = (playedRounds) => ({
   type: DISPATCH_ACTIONS.CHANGE_PLAYED_ROUNDS,
   payload: playedRounds,
+});
+export const changeQuestion = (currentQuestion) => ({
+  type: DISPATCH_ACTIONS.SET_CURRENT_QUESTION,
+  payload: currentQuestion,
 });
 
 export const startTimer = () => ({
@@ -56,6 +61,10 @@ const setPlayedRounds = (state, playedRounds) => ({
   ...state,
   playedRounds: playedRounds,
 });
+const setCurrentQuestion = (state, currentQuestion) => ({
+  ...state,
+  currentQuestion: currentQuestion,
+});
 
 const setTimer = (state) => ({
   ...state,
@@ -72,6 +81,8 @@ export const reducer = (state, action) => {
       return setPlayedRounds(state, action.payload);
     case DISPATCH_ACTIONS.START_TIMER:
       return setTimer(state, action.payload);
+    case DISPATCH_ACTIONS.SET_CURRENT_QUESTION:
+      return setCurrentQuestion(state, action.payload);
     default:
       throw new Error("Invalid");
   }

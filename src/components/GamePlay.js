@@ -1,17 +1,20 @@
 import React, { useState, useEffect } from "react";
 import SkipButton from "./SkipButton";
-import { generateNumber } from "../utils";
+import { generateNumber, generateProblemSec } from "../utils";
 import { evaluate } from "../utils";
 import { generateProblem } from "../utils";
 import { GAME_MODES } from "../utils/constants";
 
 const GamePlay = (props) => {
+  const { currentQuestion } = props;
+
+  const { question } = currentQuestion;
   const [gameCount, setGameCount] = useState(1);
-  const [correctAnswer, setCorrectAnswer] = useState("");
-  const [question, setQuestion] = useState(0);
+  //   const [correctAnswer, setCorrectAnswer] = useState("");
+  //   const [question, setQuestion] = useState(0);
   const [userAnswer, setUserAnswer] = useState("");
   const [skipGame, setSkipGame] = useState(0);
-  const [time, setTime] = useState(Date.now());
+  //   const [time, setTime] = useState(Date.now());
 
   const { round, handlePlayedRoundsDisplay, setGameMode } = props;
 
@@ -32,23 +35,43 @@ const GamePlay = (props) => {
   const reset = () => {
     setUserAnswer("");
     setCorrectAnswer("");
-    setQuestion("");
+    // setQuestion("");
     setGameCount((gameCount) => gameCount + 1);
-    getProblem();
+    // getProblem();
     setTime(Date.now());
   };
   useEffect(() => {
-    getProblem();
+    // getProblem();
   }, []);
 
-  const getProblem = () => {
-    const problem = generateProblem();
-    setCorrectAnswer(problem.correctAnswer);
-    setQuestion(problem.question);
-  };
+  //   const getProblem = () => {
+  //     const problem = generateProblemSec(question.nextExpression);
+  //     // setCorrectAnswer(problem.correctAnswer);
+  //     // setQuestion(problem.question);
+  //   };
 
   const submitForm = (event) => {
     event.preventDefault();
+
+    // Get the user answer from the input field
+    // make a post request to /games/${currentQuestion.id}/moves
+    // with body => { guess: userAnswer }
+
+    /* 
+		response : {
+			move: {
+				timeSpent,
+				correct: true/false,
+				skipped
+			}, 
+			game: {
+				id: 
+				type
+			}
+		}
+	*/
+
+    // setCurrentQuestion(response.game);
 
     if (
       userAnswer.toString().length == correctAnswer.toString().length &&
@@ -70,7 +93,7 @@ const GamePlay = (props) => {
   const handleSkip = () => {
     setSkipGame(skipGame + 1);
     setGameCount((gameCount) => gameCount + 1);
-    getProblem();
+    // getProblem();
   };
 
   return (

@@ -9,4 +9,12 @@ export const DISPATCH_ACTIONS = {
   CHANGE_ROUND: "changeRound",
   START_TIMER: "startTimer",
   CHANGE_PLAYED_ROUNDS: "changePlayedRounds",
+  SET_CURRENT_QUESTION: "setCurrentQuestion",
+};
+
+export const HTTP_METHODS = {
+  GET: "GET",
+  POST: "POST",
+  DELETE: "DELETE",
+  PATCH: "PATCH",
 };

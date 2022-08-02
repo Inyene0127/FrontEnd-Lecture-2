@@ -10,9 +10,11 @@ import {
   startTimer,
   initialState,
   changePlayedRounds,
+  changeQuestion,
 } from "./hooks/reducer";
 import { GAME_MODES } from "./utils/constants";
 import GameHistory from "./components/GameHistory";
+import { generateProblemSec } from "./utils";
 
 const App = () => {
   const [state, dispatch] = useReducer(reducer, initialState);
@@ -22,8 +24,7 @@ const App = () => {
   const setGameMode = (gameMode) => dispatch(changeGameMode(gameMode));
   const setRound = (round) => dispatch(changeRound(round));
   const setTimer = () => dispatch(startTimer());
-  const setPlayedRounds = (playedRounds) =>
-    dispatch(changePlayedRounds(playedRounds));
+  const setCurrentQuestion = (question) => dispatch(changeQuestion(question));
 
   //state that handles the array for the total rounds played
   const [gameHistory, setGameHistory] = useState([]);
@@ -53,6 +54,13 @@ const App = () => {
     miniReset();
   };
 
+  const handleGameStart = (question) => {
+    setCurrentQuestion(generateProblemSec(question));
+    setGameMode(GAME_MODES.GAME_START);
+  };
+
+  console.log({ state });
+
   return (
     <div>
       {/*total game round played */}
@@ -70,7 +78,8 @@ const App = () => {
 
       {state.gameMode === GAME_MODES.GAME_DISPLAY && (
         <GameScreen
-          setGameMode={setGameMode}
+          //   setGameMode={setGameMode}
+          handleGameStart={handleGameStart}
           round={state.round}
           setRound={setRound}
         />
@@ -79,6 +88,7 @@ const App = () => {
         <GamePlay
           setGameMode={setGameMode}
           round={state.round}
+          currentQuestion={state.currentQuestion}
           handlePlayedRoundsDisplay={handlePlayedRoundsDisplay}
         />
       )}
