@@ -1,10 +1,11 @@
 import React,{ useState } from 'react';
-import { GAME_MODES } from '../utils/constants'
+import { http } from '../utils';
+import { GAME_MODES, HTTP_METHODS } from '../utils/constants'
 
 
 const GameScreen = (props) => {
 
-   const {round, setGameMode, setRound} = props
+   const {round, handleGameStart, setRound} = props
   
   const handleChange = ({ target }) => {
 
@@ -15,10 +16,22 @@ const GameScreen = (props) => {
         };
   }
 
-   const handleClick = () => {
-    setGameMode(GAME_MODES.GAME_START);
-   }
+   const handleClick = async (e) => {
+    e.preventDefault();
+    const question = await http({
+      url: '/games',
+      method: HTTP_METHODS.POST,
+      body: {
+        type: "mathemagician",
+        rounds: round,      
+      },
+    })
+    handleGameStart(question);
     
+
+   }
+   
+   
 
   return (
     <div id='container' className='header'>

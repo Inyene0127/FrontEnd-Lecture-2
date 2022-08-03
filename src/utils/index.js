@@ -40,3 +40,26 @@
       question
     }
   }
+
+  export function generateProblemSec(currentQuestion) {
+    const {lhs, rhs, operator} = currentQuestion.nextExpression;
+    const question = `${lhs} ${operator} ${rhs}`
+  
+    return {
+      question,
+      ...nextExpression
+    }    
+  }
+
+
+  export const http = async ({url, method, body}) => {
+    const req = await fetch(`http://localhost:8081${url}`, {
+      method,
+      headers: {
+        "content-type": "application/json"
+      },
+      body: JSON.stringify(body),
+    });
+    const response = await req.json();
+    return response 
+  };

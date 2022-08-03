@@ -4,13 +4,15 @@ import GamePlay from './components/GamePlay'
 import GameEnd from './components/GameEnd'
 import GamePlayed from './GamePlayed'
 import { GAME_MODES } from './utils/constants'
+import { generateProblemSec } from './utils/index';
 import {
   reducer,
   changeGameMode,
   changeRound,
   startTimer,
   initialState,
-  changePlayedRounds
+  changePlayedRounds,
+  changeCurrentQuestion
 } from './hooks/reducer';
 import GameHistory from './components/GameHistory'
 
@@ -24,8 +26,9 @@ const App = () => {
   const setGameMode = (gameMode) => dispatch(changeGameMode(gameMode));
   const setRound = (round) => dispatch(changeRound(round));
   const setTimer = () => dispatch(startTimer()); 
-  const setPlayedRounds = (playedRounds) => dispatch(changePlayedRounds(playedRounds))
-  const {playedRounds} = state
+  const setPlayedRounds = (playedRounds) => dispatch(changePlayedRounds(playedRounds));
+  const setCurrentQuestion = (currentQuestion) => dispatch(changeCurrentQuestion(currentQuestion));
+  const {playedRounds, currentQuestion} = state
   //
 
   //state that handles the array for the total rounds played
@@ -43,6 +46,11 @@ const App = () => {
 
   const handleGameHistory = () => {
     setGameHistory([...gameHistory,playedRounds]); 
+  };
+
+  const handleGameStart = (currentQuestion) => {
+    setCurrentQuestion(generateProblemSec(currentQuestion));
+    setGameMode(GAME_MODES.GAME_START)
   }
 
   const handleRestart = () => { 
@@ -56,6 +64,7 @@ const App = () => {
   miniReset()
   setGameMode('Game Display');
 };
+console.log({state})
   return (
       <div> 
          {/*current concluded game round */}
@@ -67,10 +76,10 @@ const App = () => {
              )})}         
     
         { state.gameMode === GAME_MODES.GAME_DISPLAY &&
-            <GameScreen setGameMode={setGameMode} round={state.round}  setRound={setRound} />}
+            <GameScreen handleGameStart={handleGameStart} round={state.round}  setRound={setRound} />}
 
         { state.gameMode === GAME_MODES.GAME_START &&
-           <GamePlay setGameMode={setGameMode} round={state.round} handlePlayedRoundsDisplay={handlePlayedRoundsDisplay}/>
+           <GamePlay setGameMode={setGameMode} round={state.round} handlePlayedRoundsDisplay={handlePlayedRoundsDisplay} currentQuestion={currentQuestion}/>
           }
         
         { state.gameMode === GAME_MODES.GAME_END && 

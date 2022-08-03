@@ -10,15 +10,15 @@ import { GAME_MODES } from '../utils/constants'
 
 const GamePlay = (props) => { 
   
-  
   const [gameCount, setGameCount] = useState(1);
   const [correctAnswer, setCorrectAnswer] = useState('');
-  const [question, setQuestion] = useState(0);
+  // const [question, setQuestion] = useState(0);
   const [userAnswer, setUserAnswer] = useState('');
   const [skipGame, setSkipGame] = useState(0);
   const [time, setTime] = useState(Date.now())
 
-  const {round, handlePlayedRoundsDisplay, setGameMode} = props
+  const {round, handlePlayedRoundsDisplay, setGameMode, currentQuestion} = props;
+  const { question } = currentQuestion;
 
 
   const timeDifference = Math.floor(Date.now() - time) / 1000;
@@ -27,7 +27,6 @@ const GamePlay = (props) => {
 
       id: Math.random(),
       question: question,
-      correctAnswer: correctAnswer,
       userAnswer: userAnswer,
       time: Date.now()-time,
       speed: timeDifference < 3
@@ -37,27 +36,27 @@ const GamePlay = (props) => {
 
       setUserAnswer('');
       setCorrectAnswer('');
-      setQuestion('')
       setGameCount((gameCount) => gameCount + 1);
-      getProblem(); 
+      // getProblem(); 
       setTime(Date.now());  
 
   }
     useEffect(() => {
-        getProblem();
+        // getProblem();
     }, []);
 
 
-    const getProblem = () => {
-      const problem = generateProblem();
-      setCorrectAnswer(problem.correctAnswer);
-      setQuestion(problem.question);
-    }
+    // const getProblem = () => {
+    //   const problem = generateProblem();
+    //   setCorrectAnswer(problem.correctAnswer);
+    //   setQuestion(problem.question);
+    // }
   
   
     const submitForm = (event) => {
 
-      event.preventDefault();    
+      event.preventDefault();
+      console.log(userAnswer)
        
        if ( (userAnswer.toString().length == correctAnswer.toString().length) && (gameCount < round) ) {
         handlePlayedRoundsDisplay(playedRoundsObject);  

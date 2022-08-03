@@ -9,5 +9,14 @@ export const GAME_MODES = {
     CHANGE_ROUND: 'changeRound',
     CHANGE_PLAYED_ROUNDS: 'changePlayedRounds',
     START_TIMER: 'startTimer',
+    CHANGE_CURRENT_QUESTION: 'currentQuestion'
+
+  }
+  
+  export const HTTP_METHODS = {
+    GET: 'GET',
+    POST: 'POST',
+    PATCH: 'PATCH',
+    DELETE: 'DELETE'
 
   }
