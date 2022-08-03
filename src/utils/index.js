@@ -43,11 +43,13 @@
 
   export function generateProblemSec(currentQuestion) {
     const {lhs, rhs, operator} = currentQuestion.nextExpression;
+    const id = currentQuestion.id;
     const question = `${lhs} ${operator} ${rhs}`
-  
     return {
       question,
-      ...nextExpression
+      id,
+      ...currentQuestion.nextExpression,
+      ...currentQuestion.id
     }    
   }
 

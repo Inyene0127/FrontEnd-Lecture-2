@@ -25,10 +25,8 @@ const GameScreen = (props) => {
         type: "mathemagician",
         rounds: round,      
       },
-    })
+    });
     handleGameStart(question);
-    
-
    }
    
    

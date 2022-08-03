@@ -1,9 +1,10 @@
 import React,{ useState, useEffect } from 'react'
 import SkipButton from './SkipButton';
-import { generateNumber } from '../utils';
+import { generateNumber, generateProblemSec, http } from '../utils';
 import { evaluate } from '../utils';
 import { generateProblem } from '../utils';
-import { GAME_MODES } from '../utils/constants'
+// import { http } from '../utils';
+import { GAME_MODES, HTTP_METHODS } from '../utils/constants'
 
 
 
@@ -17,8 +18,10 @@ const GamePlay = (props) => {
   const [skipGame, setSkipGame] = useState(0);
   const [time, setTime] = useState(Date.now())
 
-  const {round, handlePlayedRoundsDisplay, setGameMode, currentQuestion} = props;
+  const {round, handlePlayedRoundsDisplay, setGameMode, currentQuestion, setCurrentQuestion} = props;
   const { question } = currentQuestion;
+  const { id } = currentQuestion;
+
 
 
   const timeDifference = Math.floor(Date.now() - time) / 1000;
@@ -37,44 +40,47 @@ const GamePlay = (props) => {
       setUserAnswer('');
       setCorrectAnswer('');
       setGameCount((gameCount) => gameCount + 1);
-      // getProblem(); 
       setTime(Date.now());  
 
   }
     useEffect(() => {
-        // getProblem();
     }, []);
-
-
-    // const getProblem = () => {
-    //   const problem = generateProblem();
-    //   setCorrectAnswer(problem.correctAnswer);
-    //   setQuestion(problem.question);
-    // }
   
   
-    const submitForm = (event) => {
+    const submitForm = async (event) => {
 
       event.preventDefault();
-      console.log(userAnswer)
-       
-       if ( (userAnswer.toString().length == correctAnswer.toString().length) && (gameCount < round) ) {
-        handlePlayedRoundsDisplay(playedRoundsObject);  
-        reset();    
-       }
-       else if ( (userAnswer.toString().length === correctAnswer.toString().length) && gameCount == round ) {
-        handlePlayedRoundsDisplay(playedRoundsObject)
-        setSkipGame(0);
-        setGameMode(GAME_MODES.GAME_END);
-        setGameCount(1);
+
+      const request = await http({
+        url: `/games/${id}/moves`,
+        method: HTTP_METHODS.POST,
+        body: {
+          guess: userAnswer,      
+        }
+      }) 
+      console.log(request)
+
+      if (currentQuestion.nextExpression === null){
+        setGameMode(GAME_MODES.GAME_END)
       }
+
+      
+      //  if ( (userAnswer.toString().length == correctAnswer.toString().length) && (gameCount < round) ) {
+      //   handlePlayedRoundsDisplay(playedRoundsObject);  
+      //   reset();    
+      //  }
+      //  else if ( (userAnswer.toString().length === correctAnswer.toString().length) && gameCount == round ) {
+      //   handlePlayedRoundsDisplay(playedRoundsObject)
+      //   setSkipGame(0);
+      //   setGameMode(GAME_MODES.GAME_END);
+      //   setGameCount(1);
+      // }
   };
   
 
     const handleSkip = () => {
       setSkipGame(skipGame + 1)    
-      setGameCount((gameCount) => gameCount + 1);
-      getProblem();        
+      setGameCount((gameCount) => gameCount + 1);       
     };
       
   

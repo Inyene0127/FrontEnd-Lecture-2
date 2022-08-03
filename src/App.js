@@ -15,6 +15,7 @@ import {
   changeCurrentQuestion
 } from './hooks/reducer';
 import GameHistory from './components/GameHistory'
+import { use } from 'chai'
 
 
 
@@ -33,6 +34,7 @@ const App = () => {
 
   //state that handles the array for the total rounds played
   const [gameHistory, setGameHistory] = useState([]); 
+  // const [currentQuestionId, setCurrentQuestionId] = useState()
 
   const miniReset = () => {
     handleGameHistory();    
@@ -79,7 +81,7 @@ console.log({state})
             <GameScreen handleGameStart={handleGameStart} round={state.round}  setRound={setRound} />}
 
         { state.gameMode === GAME_MODES.GAME_START &&
-           <GamePlay setGameMode={setGameMode} round={state.round} handlePlayedRoundsDisplay={handlePlayedRoundsDisplay} currentQuestion={currentQuestion}/>
+           <GamePlay setGameMode={setGameMode} round={state.round} handlePlayedRoundsDisplay={handlePlayedRoundsDisplay} currentQuestion={currentQuestion} setCurrentQuestion={setCurrentQuestion}/>
           }
         
         { state.gameMode === GAME_MODES.GAME_END && 
