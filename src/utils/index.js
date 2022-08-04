@@ -34,14 +34,14 @@ export function generateProblem() {
   };
 }
 
-export function generateProblemSec(question) {
-  const { lhs, rhs, operator } = question.nextExprexxion;
+export function generateProblemSec(currentQuestion) {
+  const { lhs, rhs, operator } = currentQuestion.nextExpression;
 
   const question = `${lhs} ${operator} ${rhs}`;
 
   return {
     question,
-    ...nextExprexxion,
+    ...nextExpression,
   };
 }
 
