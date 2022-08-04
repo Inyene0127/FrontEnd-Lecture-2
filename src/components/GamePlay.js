@@ -12,45 +12,44 @@ import { GAME_MODES, HTTP_METHODS } from '../utils/constants'
 const GamePlay = (props) => { 
   
   const [gameCount, setGameCount] = useState(1);
-  const [correctAnswer, setCorrectAnswer] = useState('');
-  // const [question, setQuestion] = useState(0);
+  // const [correctAnswer, setCorrectAnswer] = useState('');
   const [userAnswer, setUserAnswer] = useState('');
   const [skipGame, setSkipGame] = useState(0);
-  const [time, setTime] = useState(Date.now())
+  // const [time, setTime] = useState(Date.now())
 
-  const {round, handlePlayedRoundsDisplay, setGameMode, currentQuestion, setCurrentQuestion} = props;
+  const {round, handlePlayedRoundsDisplay, setGameMode, currentQuestion, setCurrentQuestion,setIsLoading, isLoading} = props;
   const { question } = currentQuestion;
   const { id } = currentQuestion;
 
 
 
-  const timeDifference = Math.floor(Date.now() - time) / 1000;
+  // const timeDifference = Math.floor(Date.now() - time) / 1000;
   
-    const playedRoundsObject = {
+  //   const playedRoundsObject = {
 
-      id: Math.random(),
-      question: question,
-      userAnswer: userAnswer,
-      time: Date.now()-time,
-      speed: timeDifference < 3
+  //     id: Math.random(),
+  //     question: question,
+  //     userAnswer: userAnswer,
+  //     time: Date.now()-time,
+  //     speed: timeDifference < 3
 
-  }
+  // }
     const reset = () => {
 
       setUserAnswer('');
-      setCorrectAnswer('');
-      setGameCount((gameCount) => gameCount + 1);
-      setTime(Date.now());  
+      // setCorrectAnswer('');
+      // setGameCount((gameCount) => gameCount + 1);
+      // setTime(Date.now());  
 
   }
-    useEffect(() => {
-    }, []);
+  // useEffect(() => {
+  //   setTimeout(() => setIsLoading(true), 500);
+  // }, []);
   
-  
+    // console.log(nextQuestion);
     const submitForm = async (event) => {
-
       event.preventDefault();
-
+      try { 
       const request = await http({
         url: `/games/${id}/moves`,
         method: HTTP_METHODS.POST,
@@ -59,14 +58,19 @@ const GamePlay = (props) => {
         }
       }) 
       console.log(request)
-
-      if (currentQuestion.nextExpression === null){
-        setGameMode(GAME_MODES.GAME_END)
+      if (request.game.nextExpression !== null){
+        setUserAnswer('');
+        // handlePlayedRoundsDisplay(playedRoundsObject); 
+        setCurrentQuestion(generateProblemSec(request.game));
+    }else if (request.game.nextExpression === null) {
+        setGameMode(GAME_MODES.GAME_END);
       }
-
-      
+    }
+    catch (err) {
+        console.log('error fetching data', err) 
+    } 
       //  if ( (userAnswer.toString().length == correctAnswer.toString().length) && (gameCount < round) ) {
-      //   handlePlayedRoundsDisplay(playedRoundsObject);  
+      //    
       //   reset();    
       //  }
       //  else if ( (userAnswer.toString().length === correctAnswer.toString().length) && gameCount == round ) {
@@ -83,10 +87,10 @@ const GamePlay = (props) => {
       setGameCount((gameCount) => gameCount + 1);       
     };
       
-  
 
   return (
-          <div id='container' className='header'>
+
+          <div id='container' className='header'>          
             <h1>{question}</h1>
               <form onSubmit={submitForm}>
                 <input className="inputVal" value={userAnswer} onChange={(e) => setUserAnswer((e.target.value))} autoFocus/>

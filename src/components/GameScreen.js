@@ -5,7 +5,7 @@ import { GAME_MODES, HTTP_METHODS } from '../utils/constants'
 
 const GameScreen = (props) => {
 
-   const {round, handleGameStart, setRound} = props
+   const {round, handleGameStart, setRound, setIsLoading, setGameMode} = props
   
   const handleChange = ({ target }) => {
 
@@ -18,6 +18,7 @@ const GameScreen = (props) => {
 
    const handleClick = async (e) => {
     e.preventDefault();
+    try {
     const question = await http({
       url: '/games',
       method: HTTP_METHODS.POST,
@@ -26,7 +27,15 @@ const GameScreen = (props) => {
         rounds: round,      
       },
     });
-    handleGameStart(question);
+    setIsLoading(false);
+    setGameMode('');
+    setTimeout(() => handleGameStart(question), 300)
+    }
+    catch(err) {
+      setIsLoading(false);
+      console.log('error fetching data',err);
+    }
+    
    }
    
    

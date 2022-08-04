@@ -49,7 +49,6 @@
       question,
       id,
       ...currentQuestion.nextExpression,
-      ...currentQuestion.id
     }    
   }
 

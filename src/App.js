@@ -12,10 +12,10 @@ import {
   startTimer,
   initialState,
   changePlayedRounds,
-  changeCurrentQuestion
+  changeCurrentQuestion,
+  changeIsLoading
 } from './hooks/reducer';
 import GameHistory from './components/GameHistory'
-import { use } from 'chai'
 
 
 
@@ -29,7 +29,8 @@ const App = () => {
   const setTimer = () => dispatch(startTimer()); 
   const setPlayedRounds = (playedRounds) => dispatch(changePlayedRounds(playedRounds));
   const setCurrentQuestion = (currentQuestion) => dispatch(changeCurrentQuestion(currentQuestion));
-  const {playedRounds, currentQuestion} = state
+  const setIsLoading = (isLoading) => dispatch(changeIsLoading(isLoading));
+  const {playedRounds, currentQuestion, isLoading} = state
   //
 
   //state that handles the array for the total rounds played
@@ -51,8 +52,11 @@ const App = () => {
   };
 
   const handleGameStart = (currentQuestion) => {
-    setCurrentQuestion(generateProblemSec(currentQuestion));
+    setIsLoading(true);
     setGameMode(GAME_MODES.GAME_START)
+    setCurrentQuestion(generateProblemSec(currentQuestion));
+    
+    
   }
 
   const handleRestart = () => { 
@@ -66,9 +70,14 @@ const App = () => {
   miniReset()
   setGameMode('Game Display');
 };
-console.log({state})
+// console.log({state})
   return (
       <div> 
+        {
+            !isLoading && <h1>Game is Loading.....</h1>
+          }
+
+
          {/*current concluded game round */}
         { playedRounds.map((rounds) => {
           return (
@@ -78,7 +87,7 @@ console.log({state})
              )})}         
     
         { state.gameMode === GAME_MODES.GAME_DISPLAY &&
-            <GameScreen handleGameStart={handleGameStart} round={state.round}  setRound={setRound} />}
+            <GameScreen handleGameStart={handleGameStart} round={state.round}  setRound={setRound} setIsLoading={setIsLoading} setGameMode={setGameMode}/>}
 
         { state.gameMode === GAME_MODES.GAME_START &&
            <GamePlay setGameMode={setGameMode} round={state.round} handlePlayedRoundsDisplay={handlePlayedRoundsDisplay} currentQuestion={currentQuestion} setCurrentQuestion={setCurrentQuestion}/>

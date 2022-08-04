@@ -9,7 +9,8 @@ export const GAME_MODES = {
     CHANGE_ROUND: 'changeRound',
     CHANGE_PLAYED_ROUNDS: 'changePlayedRounds',
     START_TIMER: 'startTimer',
-    CHANGE_CURRENT_QUESTION: 'currentQuestion'
+    CHANGE_CURRENT_QUESTION: 'currentQuestion',
+    CHANGE_IS_LOADING: 'changeIsLoading'
 
   }
   
@@ -18,5 +19,4 @@ export const GAME_MODES = {
     POST: 'POST',
     PATCH: 'PATCH',
     DELETE: 'DELETE'
-
   }

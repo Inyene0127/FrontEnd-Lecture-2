@@ -26,12 +26,20 @@ export const changeCurrentQuestion = (currentQuestion) => ({
   payload: currentQuestion
 });
 
+export const changeIsLoading = (isLoading) => ({
+  type: DISPATCH_ACTIONS.CHANGE_IS_LOADING,
+  payload: isLoading
+});
+
+
+
 export const initialState = () => ({
   round: 3,
   timer: null,
   gameMode: GAME_MODES.GAME_DISPLAY,
   playedRounds: [],
   currentQuestion: null,
+  isLoading: true,
 });
 
 //SETTER
@@ -60,6 +68,13 @@ const setCurrentQuestion = (state, newCurrentQuestion) => ({
   currentQuestion: newCurrentQuestion
 });
 
+const setIsLoading = (state, newIsLoading) => ({
+  ...state,
+  isLoading: newIsLoading,
+});
+
+
+
 export const reducer = (state, action) => {
   switch (action.type) {
     case DISPATCH_ACTIONS.CHANGE_GAMEMODE:
@@ -72,6 +87,8 @@ export const reducer = (state, action) => {
       return setPlayedRounds(state, action.payload);
     case DISPATCH_ACTIONS.CHANGE_CURRENT_QUESTION:
       return setCurrentQuestion(state, action.payload);
+    case DISPATCH_ACTIONS.CHANGE_IS_LOADING:
+        return setIsLoading(state, action.payload);
             
     default:
       throw new Error("Invalid");
