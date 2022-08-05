@@ -1,110 +1,149 @@
-import React, {useState, useReducer} from 'react'
-import GameScreen from './components/GameScreen'
-import GamePlay from './components/GamePlay'
-import GameEnd from './components/GameEnd'
-import GamePlayed from './GamePlayed'
-import { GAME_MODES } from './utils/constants'
-import { generateProblemSec } from './utils/index';
+import React, { useState, useReducer } from "react";
+import GameScreen from "./components/GameScreen";
+import GamePlay from "./components/GamePlay";
+import GameEnd from "./components/GameEnd";
+import GamePlayed from "./GamePlayed";
+import { GAME_MODES, HTTP_METHODS } from "./utils/constants";
+import { generateProblemSec, http } from "./utils/index";
 import {
   reducer,
   changeGameMode,
   changeRound,
-  startTimer,
   initialState,
   changePlayedRounds,
   changeCurrentQuestion,
-  changeIsLoading
-} from './hooks/reducer';
-import GameHistory from './components/GameHistory'
-
-
+  changeIsLoading,
+  changePreviousRoundAnswer,
+  changeTimer,
+  clearPreviousRoundAnswer,
+} from "./hooks/reducer";
+import GameHistory from "./components/GameHistory";
 
 const App = () => {
-
-  const [state, dispatch] = useReducer(reducer,undefined, initialState);
- 
+  const [state, dispatch] = useReducer(reducer, undefined, initialState);
 
   const setGameMode = (gameMode) => dispatch(changeGameMode(gameMode));
   const setRound = (round) => dispatch(changeRound(round));
-  const setTimer = () => dispatch(startTimer()); 
-  const setPlayedRounds = (playedRounds) => dispatch(changePlayedRounds(playedRounds));
-  const setCurrentQuestion = (currentQuestion) => dispatch(changeCurrentQuestion(currentQuestion));
+  const setTimer = (timer) => dispatch(changeTimer(timer));
+  const setPlayedRounds = (playedRounds) =>
+    dispatch(changePlayedRounds(playedRounds));
+  const setCurrentQuestion = (currentQuestion) =>
+    dispatch(changeCurrentQuestion(currentQuestion));
   const setIsLoading = (isLoading) => dispatch(changeIsLoading(isLoading));
-  const {playedRounds, currentQuestion, isLoading} = state
+  const setPreviousRoundAnswer = (currentAnswer) => {
+    console.log({ setting: currentAnswer });
+    return dispatch(changePreviousRoundAnswer(currentAnswer));
+  };
+  const setClearPreviousRoundAnswer = () =>
+    dispatch(clearPreviousRoundAnswer());
+
+  const { currentQuestion, isLoading, previousRoundAnswer, round } = state;
   //
 
   //state that handles the array for the total rounds played
-  const [gameHistory, setGameHistory] = useState([]); 
+  const [gameHistory, setGameHistory] = useState([]);
   // const [currentQuestionId, setCurrentQuestionId] = useState()
 
   const miniReset = () => {
-    handleGameHistory();    
+    handleGameHistory();
     setPlayedRounds([]);
-    setTimer(Date.now()) 
-  }
-  
-  const handlePlayedRoundsDisplay = (playedRoundsObject) => {
-    setPlayedRounds([...playedRounds, playedRoundsObject]);
-  }
-
-  const handleGameHistory = () => {
-    setGameHistory([...gameHistory,playedRounds]); 
+    setTimer(Date.now());
   };
 
-  const handleGameStart = (currentQuestion) => {
+  const handlePlayedRoundsDisplay = (playedRoundsObject) => {
+    setPlayedRounds([...playedRounds, playedRoundsObject]);
+  };
+
+  const handleGameStart = async () => {
     setIsLoading(true);
-    setGameMode(GAME_MODES.GAME_START)
-    setCurrentQuestion(generateProblemSec(currentQuestion));
-    
-    
-  }
+    try {
+      const question = await http({
+        url: "/games",
+        method: HTTP_METHODS.POST,
+        body: {
+          type: "mathemagician",
+          rounds: round,
+        },
+      });
 
-  const handleRestart = () => { 
-    setRound(state.round)
-    setGameMode(GAME_MODES.GAME_START);
-    miniReset()
-    
- };
+      console.log({ question });
 
- const handleHome=(e) => {  
-  miniReset()
-  setGameMode('Game Display');
-};
-// console.log({state})
+      if (!question) {
+        alert("Error from backend");
+        return;
+      }
+      setGameMode(GAME_MODES.GAME_START);
+      setCurrentQuestion(generateProblemSec(question));
+    } catch (err) {
+      setCurrentQuestion(null);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleTimer = async (saveAnswer) => {
+    // add upp all timers and set to time state
+    setPreviousRoundAnswer(saveAnswer);
+
+    setTimer(allTimers);
+  };
+
+  const handleRestart = () => {
+    setClearPreviousRoundAnswer();
+    // we want to reinitalize the game with the previous round
+    handleGameStart();
+  };
+
+  const handleHome = (e) => {
+    miniReset();
+    setGameMode("Game Display");
+  };
   return (
-      <div> 
-        {
-            !isLoading && <h1>Game is Loading.....</h1>
-          }
+    <div>
+      {/*current concluded game round */}
+      {previousRoundAnswer.map((rounds) => {
+        return (
+          <div key={rounds.id} className="game_history">
+            <GamePlayed {...rounds} />
+          </div>
+        );
+      })}
 
+      {state.gameMode === GAME_MODES.GAME_DISPLAY && (
+        <GameScreen
+          handleGameStart={handleGameStart}
+          round={state.round}
+          setRound={setRound}
+        />
+      )}
 
-         {/*current concluded game round */}
-        { playedRounds.map((rounds) => {
-          return (
-          <div key={rounds.id} className='game_history'> 
-          <GamePlayed {...rounds}/>
-            </div>
-             )})}         
-    
-        { state.gameMode === GAME_MODES.GAME_DISPLAY &&
-            <GameScreen handleGameStart={handleGameStart} round={state.round}  setRound={setRound} setIsLoading={setIsLoading} setGameMode={setGameMode}/>}
+      {state.gameMode === GAME_MODES.GAME_START && (
+        <GamePlay
+          isLoading={isLoading}
+          setIsLoading={setIsLoading}
+          round={state.round}
+          currentQuestion={currentQuestion}
+          setCurrentQuestion={setCurrentQuestion}
+          setPreviousRoundAnswer={setPreviousRoundAnswer}
+          setGameMode={setGameMode}
+          handleTimer={handleTimer}
+        />
+      )}
 
-        { state.gameMode === GAME_MODES.GAME_START &&
-           <GamePlay setGameMode={setGameMode} round={state.round} handlePlayedRoundsDisplay={handlePlayedRoundsDisplay} currentQuestion={currentQuestion} setCurrentQuestion={setCurrentQuestion}/>
-          }
-        
-        { state.gameMode === GAME_MODES.GAME_END && 
-           <GameEnd timer={state.timer} handleHome={handleHome} handleRestart={handleRestart}/>
-          } 
-        
-        {/*total game round played */}
-        { state.gameMode === GAME_MODES.GAME_END && 
+      {state.gameMode === GAME_MODES.GAME_END && (
+        <GameEnd
+          timer={state.timer}
+          handleHome={handleHome}
+          handleRestart={handleRestart}
+        />
+      )}
+
+      {/*total game round played */}
+      {state.gameMode === GAME_MODES.GAME_END && (
         <GameHistory gameHistory={gameHistory} />
-            } 
-                     
-          
+      )}
     </div>
-  )
-}
+  );
+};
 
-export default App
+export default App;
