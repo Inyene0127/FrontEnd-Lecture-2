@@ -13,6 +13,7 @@ export const DISPATCH_ACTIONS = {
   CHANGE_IS_LOADING: "changeIsLoading",
   CHANGE_PREVIOUS_ROUND_ANSWER: "changePreviousRoundAnswer",
   CLEAR_PREVIOUS_ROUND_ANSWER: "clearPreviousRoundAnswer",
+  CHANGE_ERROR_STATE: "changeErrorState",
 };
 
 export const HTTP_METHODS = {

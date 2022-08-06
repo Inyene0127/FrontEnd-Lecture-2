@@ -32,7 +32,6 @@ export const changeIsLoading = (isLoading) => ({
   payload: isLoading,
 });
 export const changePreviousRoundAnswer = (previousRoundAnswer) => {
-  console.log({ fromDispatch: previousRoundAnswer });
   return {
     type: DISPATCH_ACTIONS.CHANGE_PREVIOUS_ROUND_ANSWER,
     payload: previousRoundAnswer,
@@ -40,6 +39,10 @@ export const changePreviousRoundAnswer = (previousRoundAnswer) => {
 };
 export const clearPreviousRoundAnswer = () => ({
   type: DISPATCH_ACTIONS.CLEAR_PREVIOUS_ROUND_ANSWER,
+});
+export const changeErrorState = (error) => ({
+  type: DISPATCH_ACTIONS.CHANGE_ERROR_STATE,
+  payload: error,
 });
 
 export const initialState = () => ({
@@ -50,7 +53,7 @@ export const initialState = () => ({
   currentQuestion: null,
   isLoading: false,
   previousRoundAnswer: [],
-  gameHistory: [],
+  error: null,
 });
 
 //SETTER
@@ -64,15 +67,10 @@ const setGameMode = (state, newGameMode) => ({
   gameMode: newGameMode,
 });
 
-const setTimer = (state, timer) => {
-  console.log({ state: state });
-  const allTimers = state.previousRoundAnswer.reduce((total, curr) => {
-    return (total += curr.time);
-  }, 0);
+const setTimer = (state, allTimers) => {
   return {
     ...state,
     timer: allTimers,
-    gameHistory: [...state.gameHistory, state.previousRoundAnswer],
   };
 };
 
@@ -100,9 +98,12 @@ const setIsLoading = (state, newIsLoading) => ({
   ...state,
   isLoading: newIsLoading,
 });
+const setErrorState = (state, error) => ({
+  ...state,
+  error,
+});
 
 export const reducer = (state, action) => {
-  console.log({ state, action });
   switch (action.type) {
     case DISPATCH_ACTIONS.CHANGE_GAMEMODE:
       return setGameMode(state, action.payload);
@@ -115,13 +116,13 @@ export const reducer = (state, action) => {
     case DISPATCH_ACTIONS.CHANGE_CURRENT_QUESTION:
       return setCurrentQuestion(state, action.payload);
     case DISPATCH_ACTIONS.CHANGE_PREVIOUS_ROUND_ANSWER:
-      console.log({ payload: action.payload });
       return setPreviousRoundAnswer(state, action.payload);
     case DISPATCH_ACTIONS.CLEAR_PREVIOUS_ROUND_ANSWER:
       return setClearPreviousRoundAnswer(state);
     case DISPATCH_ACTIONS.CHANGE_IS_LOADING:
       return setIsLoading(state, action.payload);
-
+    case DISPATCH_ACTIONS.CHANGE_ERROR_STATE:
+      return setErrorState(state, action.payload);
     default:
       throw new Error("Invalid");
   }

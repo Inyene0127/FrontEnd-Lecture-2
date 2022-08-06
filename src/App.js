@@ -1,4 +1,4 @@
-import React, { useState, useReducer } from "react";
+import React, { useState, useReducer, useEffect } from "react";
 import GameScreen from "./components/GameScreen";
 import GamePlay from "./components/GamePlay";
 import GameEnd from "./components/GameEnd";
@@ -10,52 +10,63 @@ import {
   changeGameMode,
   changeRound,
   initialState,
-  changePlayedRounds,
   changeCurrentQuestion,
   changeIsLoading,
   changePreviousRoundAnswer,
   changeTimer,
   clearPreviousRoundAnswer,
+  changeErrorState,
 } from "./hooks/reducer";
 import GameHistory from "./components/GameHistory";
 
 const App = () => {
   const [state, dispatch] = useReducer(reducer, undefined, initialState);
 
+  const [gameHistory, setGameHistory] = useState([]);
+
+  const {
+    currentQuestion,
+    isLoading,
+    previousRoundAnswer,
+    round,
+    gameMode,
+    error,
+  } = state;
+
+  // Set game type
   const setGameMode = (gameMode) => dispatch(changeGameMode(gameMode));
+
   const setRound = (round) => dispatch(changeRound(round));
+
   const setTimer = (timer) => dispatch(changeTimer(timer));
-  const setPlayedRounds = (playedRounds) =>
-    dispatch(changePlayedRounds(playedRounds));
+
   const setCurrentQuestion = (currentQuestion) =>
     dispatch(changeCurrentQuestion(currentQuestion));
+
   const setIsLoading = (isLoading) => dispatch(changeIsLoading(isLoading));
+  const setErrorState = (error) => dispatch(changeErrorState(error));
+
   const setPreviousRoundAnswer = (currentAnswer) => {
-    console.log({ setting: currentAnswer });
     return dispatch(changePreviousRoundAnswer(currentAnswer));
   };
+
   const setClearPreviousRoundAnswer = () =>
     dispatch(clearPreviousRoundAnswer());
 
-  const { currentQuestion, isLoading, previousRoundAnswer, round } = state;
-  //
+  // useEffect(() => {
+  //   if (gameMode === GAME_MODES.GAME_END) {
+  //     const allTimers = previousRoundAnswer.reduce((total, curr) => {
+  //       return (total += curr.time);
+  //     }, 0);
 
-  //state that handles the array for the total rounds played
-  const [gameHistory, setGameHistory] = useState([]);
-  // const [currentQuestionId, setCurrentQuestionId] = useState()
-
-  const miniReset = () => {
-    handleGameHistory();
-    setPlayedRounds([]);
-    setTimer(Date.now());
-  };
-
-  const handlePlayedRoundsDisplay = (playedRoundsObject) => {
-    setPlayedRounds([...playedRounds, playedRoundsObject]);
-  };
+  //     setTimer(allTimers);
+  //     setGameHistory((gameHistory) => [...gameHistory, previousRoundAnswer]);
+  //   }
+  // }, [gameMode]);
 
   const handleGameStart = async () => {
     setIsLoading(true);
+    setErrorState(null);
     try {
       const question = await http({
         url: "/games",
@@ -66,44 +77,71 @@ const App = () => {
         },
       });
 
-      console.log({ question });
-
       if (!question) {
         alert("Error from backend");
+        setErrorState("Server unavailable");
         return;
       }
       setGameMode(GAME_MODES.GAME_START);
       setCurrentQuestion(generateProblemSec(question));
     } catch (err) {
       setCurrentQuestion(null);
+      setErrorState("Server unavailable");
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleTimer = async (saveAnswer) => {
-    // add upp all timers and set to time state
-    setPreviousRoundAnswer(saveAnswer);
+  const handleGamePlay = (playedRoundAnswer, request) => {
+    // I picked 2 rounds
+    //    previousRoundAnswer = []
+    // orange = 4
+    setPreviousRoundAnswer(playedRoundAnswer);
+
+    // orange = 4, the guy has picked up the orange = 5
+
+    // i wil not be able to get acess to the new previous round answer
+    // What i will have access to is the stale/old state
+
+    //fix  1
+    const localUpdatedRoundAnswer = [...previousRoundAnswer, playedRoundAnswer];
+
+    const allTimers = localUpdatedRoundAnswer.reduce((total, curr) => {
+      return (total += curr.time);
+    }, 0);
 
     setTimer(allTimers);
+
+    if (request) {
+      setCurrentQuestion(generateProblemSec(request.game));
+    } else {
+      setGameMode(GAME_MODES.GAME_END);
+      setGameHistory((gameHistory) => [
+        ...gameHistory,
+        localUpdatedRoundAnswer,
+      ]);
+    }
+
+    // or fix 2
   };
 
   const handleRestart = () => {
-    setClearPreviousRoundAnswer();
-    // we want to reinitalize the game with the previous round
+    setClearPreviousRoundAnswer([]);
     handleGameStart();
   };
 
   const handleHome = (e) => {
-    miniReset();
-    setGameMode("Game Display");
+    setGameMode(GAME_MODES.GAME_DISPLAY);
+    setClearPreviousRoundAnswer([]);
   };
+
   return (
     <div>
+      {error && <div>{error}, Please try again</div>}
       {/*current concluded game round */}
-      {previousRoundAnswer.map((rounds) => {
+      {previousRoundAnswer.map((rounds, index) => {
         return (
-          <div key={rounds.id} className="game_history">
+          <div key={index} className="game_history">
             <GamePlayed {...rounds} />
           </div>
         );
@@ -123,10 +161,8 @@ const App = () => {
           setIsLoading={setIsLoading}
           round={state.round}
           currentQuestion={currentQuestion}
-          setCurrentQuestion={setCurrentQuestion}
-          setPreviousRoundAnswer={setPreviousRoundAnswer}
-          setGameMode={setGameMode}
-          handleTimer={handleTimer}
+          handleGamePlay={handleGamePlay}
+          setErrorState={setErrorState}
         />
       )}
 

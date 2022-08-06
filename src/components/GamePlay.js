@@ -1,58 +1,28 @@
 import React, { useState, useEffect } from "react";
 import SkipButton from "./SkipButton";
-import { generateNumber, generateProblemSec, http } from "../utils";
-import { evaluate } from "../utils";
-import { generateProblem } from "../utils";
-// import { http } from '../utils';
+import { generateProblemSec, http } from "../utils";
 import { GAME_MODES, HTTP_METHODS } from "../utils/constants";
-import { changePreviousRoundAnswer } from "../hooks/reducer";
 
 const GamePlay = (props) => {
-  const [gameCount, setGameCount] = useState(1);
-  // const [correctAnswer, setCorrectAnswer] = useState('');
   const [userAnswer, setUserAnswer] = useState("");
   const [skipGame, setSkipGame] = useState(0);
 
-  // const [time, setTime] = useState(Date.now())
-
   const {
     round,
-    setGameMode,
     currentQuestion,
-    setCurrentQuestion,
     setIsLoading,
     isLoading,
-    setPreviousRoundAnswer,
-    handleTimer,
+    handleGamePlay,
+    setErrorState,
   } = props;
-  const { question } = currentQuestion;
-  const { id } = currentQuestion;
 
-  // const timeDifference = Math.floor(Date.now() - time) / 1000;
+  const { id, question } = currentQuestion;
 
-  //   const playedRoundsObject = {
-
-  //     id: Math.random(),
-  //     question: question,
-  //     userAnswer: userAnswer,
-  //     time: Date.now()-time,
-  //     speed: timeDifference < 3
-
-  // }
-  const reset = () => {
-    setUserAnswer("");
-    // setCorrectAnswer('');
-    // setGameCount((gameCount) => gameCount + 1);
-    // setTime(Date.now());
-  };
-  // useEffect(() => {
-  //   setTimeout(() => setIsLoading(true), 500);
-  // }, []);
-
-  // console.log(nextQuestion);
   const submitForm = async (event) => {
     event.preventDefault();
     setIsLoading(true);
+    setErrorState(null);
+
     try {
       const request = await http({
         url: `/games/${id}/moves`,
@@ -62,14 +32,15 @@ const GamePlay = (props) => {
         },
       });
 
-      if (!question) {
+      if (!request) {
         alert("Error from backend");
+        setErrorState("Server unavailable");
         return;
       }
 
       const { game, move } = request;
 
-      const saveAnswer = {
+      const playedRoundAnswer = {
         question: currentQuestion.question,
         userAnswer,
         time: move.timeSpentMillis,
@@ -77,19 +48,16 @@ const GamePlay = (props) => {
         speed: true,
       };
 
-      if (game.nextExpression !== null) {
-        // handlePlayedRoundsDisplay(playedRoundsObject);
-        setPreviousRoundAnswer(saveAnswer);
-        setCurrentQuestion(generateProblemSec(request.game));
-      } else if (game.nextExpression === null) {
-        console.log({ saveAnswer });
-        handleTimer(saveAnswer);
-        setGameMode(GAME_MODES.GAME_END);
+      if (game.nextExpression) {
+        handleGamePlay(playedRoundAnswer, request);
+      } else {
+        handleGamePlay(playedRoundAnswer);
       }
 
       setUserAnswer("");
     } catch (err) {
       console.log("error fetching data", err);
+      setErrorState("Server unavailable");
     } finally {
       setIsLoading(false);
     }
