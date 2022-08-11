@@ -26,21 +26,6 @@
     }
 }
 
- export function generateProblem() {
-
-    const firstNumber = generateNumber(20);
-    const secondNumber = generateNumber(20);
-    const operator = sign.signs;
-  
-    const correctAnswer = evaluate(firstNumber, secondNumber, operator);
-    const question = `${firstNumber} ${operator} ${secondNumber}`
-  
-    return {
-      correctAnswer,
-      question
-    }
-  }
-
   export function generateProblemSec(currentQuestion) {
     const {lhs, rhs, operator} = currentQuestion.nextExpression;
     const id = currentQuestion.id;
@@ -54,13 +39,22 @@
 
 
   export const http = async ({url, method, body}) => {
-    const req = await fetch(`http://localhost:8081${url}`, {
-      method,
-      headers: {
-        "content-type": "application/json"
-      },
-      body: JSON.stringify(body),
-    });
-    const response = await req.json();
-    return response 
+    try{
+      const req = await fetch(`http://localhost:8081${url}`, {
+        method,
+        headers: {
+          "content-type": "application/json"
+        },
+        body: JSON.stringify(body),
+      });
+      if (req.status === 503) {
+        return null;
+      }
+      const response = await req.json();
+      return response 
+    }
+    catch(err) {
+            return null;
+    }
+   
   };

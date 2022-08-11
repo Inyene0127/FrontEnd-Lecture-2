@@ -8,9 +8,11 @@ export const GAME_MODES = {
     CHANGE_GAMEMODE: 'changeGameMode',
     CHANGE_ROUND: 'changeRound',
     CHANGE_PLAYED_ROUNDS: 'changePlayedRounds',
-    START_TIMER: 'startTimer',
+    CHANGE_TIMER: 'changeTimer',
     CHANGE_CURRENT_QUESTION: 'currentQuestion',
-    CHANGE_IS_LOADING: 'changeIsLoading'
+    CHANGE_IS_LOADING: 'changeIsLoading',
+    CHANGE_PREVIOUS_PLAYED_ROUNDS: 'changePreviousPlayedRounds',
+    CLEAR_PREVIOUS_PLAYED_ROUNDS: 'clearPreviousPlayedRounds'
 
   }
   

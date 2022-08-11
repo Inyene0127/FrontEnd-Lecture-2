@@ -1,10 +1,7 @@
-import React,{ useState, useEffect } from 'react'
+import React,{ useState } from 'react'
 import SkipButton from './SkipButton';
-import { generateNumber, generateProblemSec, http } from '../utils';
-import { evaluate } from '../utils';
-import { generateProblem } from '../utils';
-// import { http } from '../utils';
-import { GAME_MODES, HTTP_METHODS } from '../utils/constants'
+import {  http } from '../utils';
+import {  HTTP_METHODS } from '../utils/constants'
 
 
 
@@ -12,81 +9,65 @@ import { GAME_MODES, HTTP_METHODS } from '../utils/constants'
 const GamePlay = (props) => { 
   
   const [gameCount, setGameCount] = useState(1);
-  // const [correctAnswer, setCorrectAnswer] = useState('');
   const [userAnswer, setUserAnswer] = useState('');
   const [skipGame, setSkipGame] = useState(0);
-  // const [time, setTime] = useState(Date.now())
 
-  const {round, handlePlayedRoundsDisplay, setGameMode, currentQuestion, setCurrentQuestion,setIsLoading, isLoading} = props;
+  const {
+    round,  
+    currentQuestion, 
+    setIsLoading, 
+    isLoading,
+    handleGamePlay
+  } = props;
   const { question } = currentQuestion;
   const { id } = currentQuestion;
 
-
-
-  // const timeDifference = Math.floor(Date.now() - time) / 1000;
   
-  //   const playedRoundsObject = {
-
-  //     id: Math.random(),
-  //     question: question,
-  //     userAnswer: userAnswer,
-  //     time: Date.now()-time,
-  //     speed: timeDifference < 3
-
-  // }
-    const reset = () => {
-
-      setUserAnswer('');
-      // setCorrectAnswer('');
-      // setGameCount((gameCount) => gameCount + 1);
-      // setTime(Date.now());  
-
-  }
-  // useEffect(() => {
-  //   setTimeout(() => setIsLoading(true), 500);
-  // }, []);
-  
-    // console.log(nextQuestion);
-    const submitForm = async (event) => {
+  const submitForm = async (event) => {
       event.preventDefault();
+      setIsLoading(true);
       try { 
-      const request = await http({
+  const request = await http({
         url: `/games/${id}/moves`,
         method: HTTP_METHODS.POST,
         body: {
           guess: userAnswer,      
         }
       }) 
-      console.log(request)
-      if (request.game.nextExpression !== null){
-        setUserAnswer('');
-        // handlePlayedRoundsDisplay(playedRoundsObject); 
-        setCurrentQuestion(generateProblemSec(request.game));
-    }else if (request.game.nextExpression === null) {
-        setGameMode(GAME_MODES.GAME_END);
+      if (!question) {
+        alert('Error from backend');
+        return;
       }
+  const { game, move } = request;
+  const playedRoundsArray = {
+        question: currentQuestion.question,
+        userAnswer,
+        time: move.timeSpentMillis,
+        correct: move.correct,
+        speed: true
+      }
+      if (game.nextExpression){
+        handleGamePlay(playedRoundsArray, request)
+      }else {
+        handleGamePlay(playedRoundsArray)
+      }
+      setUserAnswer('');
     }
     catch (err) {
-        console.log('error fetching data', err) 
-    } 
-      //  if ( (userAnswer.toString().length == correctAnswer.toString().length) && (gameCount < round) ) {
-      //    
-      //   reset();    
-      //  }
-      //  else if ( (userAnswer.toString().length === correctAnswer.toString().length) && gameCount == round ) {
-      //   handlePlayedRoundsDisplay(playedRoundsObject)
-      //   setSkipGame(0);
-      //   setGameMode(GAME_MODES.GAME_END);
-      //   setGameCount(1);
-      // }
+        console.log('error fetching data', err)
+         
+    }
+    finally{
+      setIsLoading(false);
+    }
   };
-  
-
-    const handleSkip = () => {
+  const handleSkip = () => {
       setSkipGame(skipGame + 1)    
       setGameCount((gameCount) => gameCount + 1);       
     };
-      
+  if (isLoading) {
+    return <h2>Game is loading...</h2>    
+  }  
 
   return (
 

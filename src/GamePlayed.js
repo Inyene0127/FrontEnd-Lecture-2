@@ -4,10 +4,12 @@ import Styling from './Styling';
 
 const GamePlayed = (props) => {
 
-    const { question, userAnswer, time, correctAnswer, speed} = props;
-    
-    const hasIncorrectAnswer = userAnswer != correctAnswer;
-    const hasCorrectAnswerInTime = userAnswer === correctAnswer.toString() && speed; 
+    const { question, userAnswer, time, correct, speed} = props;
+     
+    // console.log({props})
+
+    const hasIncorrectAnswer = !correct;
+    const hasCorrectAnswerInTime = correct && speed; 
 
 
     let colorClass = 'correct_answer--outTime';
