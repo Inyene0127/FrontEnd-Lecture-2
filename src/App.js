@@ -13,7 +13,8 @@ import {
   changeCurrentQuestion,
   changeIsLoading,
   changePreviousPlayedRounds,
-  changeTimer
+  changeTimer,
+  clearPreviousPlayedRounds
 } from './hooks/reducer';
 import GameHistory from './components/GameHistory'
 
@@ -29,22 +30,13 @@ const App = () => {
   const setTimer = (timer) => dispatch(changeTimer(timer)); 
   const setCurrentQuestion = (currentQuestion) => dispatch(changeCurrentQuestion(currentQuestion));
   const setIsLoading = (isLoading) => dispatch(changeIsLoading(isLoading));
-  const setPreviousPlayedRounds = (previousPlayedRounds) => dispatch(changePreviousPlayedRounds(previousPlayedRounds));
-  const setClearPreviousPlayedRounds = () => dispatch(changePreviousPlayedRounds());
+  const setPreviousPlayedRounds = (currentAnswer) => dispatch(changePreviousPlayedRounds(currentAnswer));
+  const setClearPreviousPlayedRounds = () => dispatch(clearPreviousPlayedRounds());
   const { currentQuestion, gameMode, previousPlayedRounds, round, timer, isLoading} = state
-  //
 
   //state that handles the array for the total rounds played
   const [gameHistory, setGameHistory] = useState([]); 
-  
 
-  
-  // const handleTimer = () => {
-  //   const allTimers = previousPlayedRounds.reduce((total, curr) => {
-  //     return total += curr.time;
-  //  }, 0);
-  //  setTimer(allTimers);
-  // }
 
   const handleGameStart = async () => {
     setIsLoading(true);
@@ -95,18 +87,11 @@ const App = () => {
         currentPlayedRound,
       ]);
     }
-
-    // or fix 2
   };
-
 
   const handleRestart = () => { 
     setClearPreviousPlayedRounds([]);
-    handleGameStart();
-    // setRound(round)
-    // setGameMode(GAME_MODES.GAME_START);
-    // miniReset();
-    
+    handleGameStart();    
  };
 
  const handleHome=(e) => {  

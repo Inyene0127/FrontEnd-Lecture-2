@@ -47,11 +47,12 @@ const GamePlay = (props) => {
         speed: true
       }
       if (game.nextExpression){
-        handleGamePlay(playedRoundsArray, request)
+        handleGamePlay(playedRoundsArray, request);
+        setUserAnswer('');
       }else {
-        handleGamePlay(playedRoundsArray)
+        handleGamePlay(playedRoundsArray);
       }
-      setUserAnswer('');
+      
     }
     catch (err) {
         console.log('error fetching data', err)

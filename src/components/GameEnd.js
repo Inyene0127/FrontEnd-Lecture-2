@@ -5,8 +5,6 @@ const GameEnd = (props) => {
 
   
   const {handleHome, handleRestart, timer} = props;
-
-  console.log(timer)
   
   return (
     <div id='container' className='header'>
