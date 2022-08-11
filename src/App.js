@@ -30,7 +30,7 @@ const App = () => {
   const setTimer = (timer) => dispatch(changeTimer(timer)); 
   const setCurrentQuestion = (currentQuestion) => dispatch(changeCurrentQuestion(currentQuestion));
   const setIsLoading = (isLoading) => dispatch(changeIsLoading(isLoading));
-  const setPreviousPlayedRounds = (currentAnswer) => dispatch(changePreviousPlayedRounds(currentAnswer));
+  const setPreviousPlayedRounds = (previousPlayedRounds) => dispatch(changePreviousPlayedRounds(previousPlayedRounds));
   const setClearPreviousPlayedRounds = () => dispatch(clearPreviousPlayedRounds());
   const { currentQuestion, gameMode, previousPlayedRounds, round, timer, isLoading} = state
 
