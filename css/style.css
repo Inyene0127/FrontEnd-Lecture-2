@@ -64,7 +64,7 @@ h2{
   border-radius: 10px;
   border-radius: 38px;
   background: #e0e0e0;
-  margin-bottom: 20px;
+  margin-bottom: 40px;
 
 }
 .time_spent{
@@ -82,7 +82,7 @@ h2{
 
 }
 .total_history{
-  margin-top: 35px;
+  margin-top: 45px;
   background-color:#958888;
   opacity: 20;
   /* padding: 30px 40px 30px 40px; */

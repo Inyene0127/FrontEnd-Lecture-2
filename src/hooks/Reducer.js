@@ -17,11 +17,6 @@ export const changeTimer = (timer) => ({
   payload: timer
 });
 
-export const changePlayedRounds = (newPlayedRounds) => ({
-  type: DISPATCH_ACTIONS.CHANGE_PLAYED_ROUNDS,
-  payload: newPlayedRounds
-});
-
 export const changeCurrentQuestion = (currentQuestion) => ({
   type: DISPATCH_ACTIONS.CHANGE_CURRENT_QUESTION,
   payload: currentQuestion
@@ -41,15 +36,22 @@ export const clearPreviousPlayedRounds = () => ({
   type: DISPATCH_ACTIONS.CLEAR_PREVIOUS_PLAYED_ROUNDS,
 });
 
+export const changeErrorState = (error) => ({
+  type: DISPATCH_ACTIONS.CHANGE_ERROR_STATE,
+  payload: error
+});
+
+
 
 export const initialState = () => ({
   round: 3,
   timer: null,
   gameMode: GAME_MODES.GAME_DISPLAY,
-  playedRounds: [],
   currentQuestion: null,
   isLoading: false,
   previousPlayedRounds: [],
+  error: null,
+
 });
 
 //SETTER
@@ -68,10 +70,7 @@ const setTimer = (state, timer) => ({
   timer: timer
 });
 
-const setPlayedRounds = (state, newPlayedRounds) => ({
-  ...state,
-  playedRounds: newPlayedRounds
-});
+
 
 const setCurrentQuestion = (state, newCurrentQuestion) => ({
   ...state,
@@ -93,6 +92,11 @@ const setClearPreviousPlayedRounds = (state) => ({
   previousPlayedRounds: []
 });
 
+const setErrorState = (state, error) => ({
+  ...state,
+  error,
+});
+
 
 export const reducer = (state, action) => {
   switch (action.type) {
@@ -101,19 +105,18 @@ export const reducer = (state, action) => {
     case DISPATCH_ACTIONS.CHANGE_ROUND:
       return setRound(state, action.payload);
     case DISPATCH_ACTIONS.CHANGE_TIMER:
-        return setTimer(state, action.payload);
-    case DISPATCH_ACTIONS.CHANGE_PLAYED_ROUNDS:
-      return setPlayedRounds(state, action.payload);
+      return setTimer(state, action.payload);
     case DISPATCH_ACTIONS.CHANGE_CURRENT_QUESTION:
       return setCurrentQuestion(state, action.payload);
     case DISPATCH_ACTIONS.CHANGE_IS_LOADING:
-        return setIsLoading(state, action.payload);
-      case DISPATCH_ACTIONS.CHANGE_PREVIOUS_PLAYED_ROUNDS:
-          return setPreviousPlayedRounds(state, action.payload);
-       case DISPATCH_ACTIONS.CLEAR_PREVIOUS_PLAYED_ROUNDS:
-            return setClearPreviousPlayedRounds(state);
-            
-    default:
+      return setIsLoading(state, action.payload);
+    case DISPATCH_ACTIONS.CHANGE_PREVIOUS_PLAYED_ROUNDS:
+      return setPreviousPlayedRounds(state, action.payload);
+    case DISPATCH_ACTIONS.CLEAR_PREVIOUS_PLAYED_ROUNDS:
+      return setClearPreviousPlayedRounds(state);
+    case DISPATCH_ACTIONS.CHANGE_ERROR_STATE:
+      return setErrorState(state, action.payload);  
+        default:
       throw new Error("Invalid");
   }
 }

@@ -12,7 +12,8 @@ export const GAME_MODES = {
     CHANGE_CURRENT_QUESTION: 'currentQuestion',
     CHANGE_IS_LOADING: 'changeIsLoading',
     CHANGE_PREVIOUS_PLAYED_ROUNDS: 'changePreviousPlayedRounds',
-    CLEAR_PREVIOUS_PLAYED_ROUNDS: 'clearPreviousPlayedRounds'
+    CLEAR_PREVIOUS_PLAYED_ROUNDS: 'clearPreviousPlayedRounds',
+    CHANGE_ERROR_STATE: 'changeErrorState'
 
   }
   

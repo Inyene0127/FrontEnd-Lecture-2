@@ -7,7 +7,7 @@ import {  HTTP_METHODS } from '../utils/constants'
 
 
 const GamePlay = (props) => { 
-  
+    
   const [gameCount, setGameCount] = useState(1);
   const [userAnswer, setUserAnswer] = useState('');
   const [skipGame, setSkipGame] = useState(0);
@@ -16,16 +16,20 @@ const GamePlay = (props) => {
     round,  
     currentQuestion, 
     setIsLoading, 
-    isLoading,
-    handleGamePlay
+    isLoading,  
+    handleGamePlay,
+    setErrorState,
+    handleSkip
   } = props;
   const { question } = currentQuestion;
   const { id } = currentQuestion;
 
   
   const submitForm = async (event) => {
+    
       event.preventDefault();
       setIsLoading(true);
+      setErrorState(null);
       try { 
   const request = await http({
         url: `/games/${id}/moves`,
@@ -36,6 +40,7 @@ const GamePlay = (props) => {
       }) 
       if (!question) {
         alert('Error from backend');
+        setErrorState('error fetching request');
         return;
       }
   const { game, move } = request;
@@ -55,20 +60,18 @@ const GamePlay = (props) => {
       
     }
     catch (err) {
-        console.log('error fetching data', err)
-         
+        setErrorState('Error fetching request');         
     }
     finally{
       setIsLoading(false);
     }
   };
-  const handleSkip = () => {
-      setSkipGame(skipGame + 1)    
-      setGameCount((gameCount) => gameCount + 1);       
-    };
+  
   if (isLoading) {
     return <h2>Game is loading...</h2>    
+    
   }  
+
 
   return (
 

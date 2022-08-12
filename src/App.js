@@ -14,7 +14,8 @@ import {
   changeIsLoading,
   changePreviousPlayedRounds,
   changeTimer,
-  clearPreviousPlayedRounds
+  clearPreviousPlayedRounds,
+  changeErrorState,
 } from './hooks/reducer';
 import GameHistory from './components/GameHistory'
 
@@ -32,7 +33,9 @@ const App = () => {
   const setIsLoading = (isLoading) => dispatch(changeIsLoading(isLoading));
   const setPreviousPlayedRounds = (previousPlayedRounds) => dispatch(changePreviousPlayedRounds(previousPlayedRounds));
   const setClearPreviousPlayedRounds = () => dispatch(clearPreviousPlayedRounds());
-  const { currentQuestion, gameMode, previousPlayedRounds, round, timer, isLoading} = state
+  const setErrorState = (error) => dispatch(changeErrorState(error));
+
+  const { currentQuestion, gameMode, previousPlayedRounds, round, timer, isLoading, error} = state
 
   //state that handles the array for the total rounds played
   const [gameHistory, setGameHistory] = useState([]); 
@@ -40,6 +43,7 @@ const App = () => {
 
   const handleGameStart = async () => {
     setIsLoading(true);
+    setErrorState(null);
     try {
       const question = await http({
         url: '/games',
@@ -50,7 +54,7 @@ const App = () => {
         },
       });
     if (!question) {
-        alert('Error from backend');
+        setErrorState('error fetching request');
         return;
       }
       setGameMode(GAME_MODES.GAME_START);
@@ -58,6 +62,7 @@ const App = () => {
       }
     catch(err) {
        setCurrentQuestion(null);
+       setErrorState('Error fetching request');
       }
     finally{
         setIsLoading(false);
@@ -94,13 +99,20 @@ const App = () => {
     handleGameStart();    
  };
 
- const handleHome=(e) => {  
+ const handleHome = () => {  
   setGameMode(GAME_MODES.GAME_DISPLAY);
   setClearPreviousPlayedRounds([]);
 };
-// console.log({state})
+
+const handleSkip = () => {
+  setCurrentQuestion(generateProblemSec(question)); 
+} 
+
+
   return (
       <div> 
+        {error && <div>{error}, please try again</div>}
+
          {/*current concluded game round */}
         { previousPlayedRounds.map((rounds, index) => {
           return (
@@ -123,7 +135,9 @@ const App = () => {
            setPreviousPlayedRounds={setPreviousPlayedRounds}
            setIsLoading={setIsLoading}
            isLoading={isLoading}
-           handleGamePlay={handleGamePlay}/>
+           handleGamePlay={handleGamePlay}
+           setErrorState={setErrorState}
+           handleSkip={handleSkip}/>
           }
         
         { gameMode === GAME_MODES.GAME_END && 
