@@ -1,4 +1,4 @@
-import React, {useState, useReducer} from 'react'
+import React, {useState, useReducer, useEffect} from 'react'
 import GameScreen from './components/GameScreen'
 import GamePlay from './components/GamePlay'
 import GameEnd from './components/GameEnd'
@@ -18,12 +18,78 @@ import {
   changeErrorState,
 } from './hooks/reducer';
 import GameHistory from './components/GameHistory'
+import {  connect  as defaultConnectWebSocket } from './components/Websocket'
+
+// const init = () => ({
+//   connecting: false,
+//   connected: false,
+//   connectionError: null,
+// });
+
+// const appReducer = (state, action) => {
+//   switch (action.type) {
+//     case "CONNECTING":
+//       return {
+//         ...state,
+//         connecting: true,
+//         connected: false,
+//         webSocketConnection: action.payload,
+//       };
+//     case "CONNECTED":
+//       return { ...state, connecting: false, connected: true };
+//     case "DISCONNECTED":
+//       return {
+//         ...state,
+//         connecting: false,
+//         connected: false,
+//         connectionError: action.payload.reason,
+//       };
+//     case "MESSAGE_RECEIVED":
+//       return null;
+//     default:
+//       throw new Error("Bad WebSocket reducer usage");
+//   }
+// };
+
+// const connectionDescription = (state) => {
+//   if (state.connected) {
+//     return "Connected";
+//   } else if (state.connecting) {
+//     return "Connecting";
+//   } else {
+//     const details = state.connectionError ? `(${state.connectionError})` : "";
+//     return `Disconnected${details}`;
+//   }
+// };
+
+const initiateConnection = (connectWebSocket) => {
+  const webSocketConnection = (connectWebSocket || defaultConnectWebSocket)({
+    onOpen: () => {
+      console.log('server is running')
+    },
+      onClose: ({ reason }) => console.log({reason})
+        // dispatch({ type: "DISCONNECTED", payload: { reason } }),
+    //   onMessage: ({ type, event }) => {
+      //   //     dispatch({ type: "MESSAGE_RECEIVED", payload: { type, event } });
+      //   },
+      // });
+      // dispatch({ type: "CONNECTING", payload: webSocketConnection });
+    })
+    return webSocketConnection;
+};
 
 
-
-const App = () => {
+const App = (props) => {
 
   const [state, dispatch] = useReducer(reducer,undefined, initialState);
+  const connectWebSocket = props.connectWebSocket || defaultConnectWebSocket;
+
+  useEffect(() => {
+    const webSocketConnection = initiateConnection(connectWebSocket);
+    // return (event) => webSocketConnection.close(event);
+  }, [connectWebSocket]);
+  
+
  
 
   const setGameMode = (gameMode) => dispatch(changeGameMode(gameMode));
@@ -39,6 +105,7 @@ const App = () => {
 
   //state that handles the array for the total rounds played
   const [gameHistory, setGameHistory] = useState([]); 
+  const [playerName, setPlayerName] = useState('');
 
 
   const handleGameStart = async () => {
@@ -53,6 +120,7 @@ const App = () => {
           rounds: round,      
         },
       });
+       
     if (!question) {
         setErrorState('error fetching request');
         return;
@@ -67,7 +135,7 @@ const App = () => {
     finally{
         setIsLoading(false);
       }
-    
+
     
   }
 
@@ -85,6 +153,7 @@ const App = () => {
 
     if (request) {
       setCurrentQuestion(generateProblemSec(request.game));
+      console.log({request})
     } else {
       setGameMode(GAME_MODES.GAME_END);
       setGameHistory((gameHistory) => [
@@ -104,14 +173,34 @@ const App = () => {
   setClearPreviousPlayedRounds([]);
 };
 
-const handleSkip = () => {
-  setCurrentQuestion(generateProblemSec(question)); 
-} 
+// const handleSkip = () => {
+//   if (request)
+//   setCurrentQuestion(generateProblemSec(question)); 
+// } 
+const handleChange = ({ target }) => {
+  const newName = target.value;
+  setPlayerName(newName);
+  };
+  
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    handleGameStart();
+  }
+
+
 
 
   return (
       <div> 
         {error && <div>{error}, please try again</div>}
+        { gameMode === GAME_MODES.GAME_DISPLAY &&
+          <div>
+            <form onSubmit={handleSubmit}>
+            Your Name: <input type='text' placeholder='Input your username' value={playerName} onChange={handleChange}></input>
+            <button>Submit</button>
+            </form>
+          </div>
+        }
 
          {/*current concluded game round */}
         { previousPlayedRounds.map((rounds, index) => {
@@ -119,13 +208,16 @@ const handleSkip = () => {
           <div key={index} className='game_history'> 
           <GamePlayed {...rounds}/>
             </div>
-             )})}         
+             )})}  
+             
     
         { gameMode === GAME_MODES.GAME_DISPLAY &&
             <GameScreen 
             handleGameStart={handleGameStart} 
             round={round}  
             setRound={setRound} 
+            setPlayerName={setPlayerName}
+            playerName={playerName}
             />}
 
         { gameMode === GAME_MODES.GAME_START &&
@@ -137,7 +229,9 @@ const handleSkip = () => {
            isLoading={isLoading}
            handleGamePlay={handleGamePlay}
            setErrorState={setErrorState}
-           handleSkip={handleSkip}/>
+           setCurrentQuestion={setCurrentQuestion}
+           playerName={playerName}
+           />
           }
         
         { gameMode === GAME_MODES.GAME_END && 

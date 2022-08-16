@@ -4,11 +4,8 @@ const Styling = styled.div`
     &.incorrect_answer{
         color:red;
     }
-    &.correct_answer--inTime{
+    &.correct_answer{
         color: green;
-    }
-    &.correct_answer--outTime{
-        color: orange;
     }
 `;
 

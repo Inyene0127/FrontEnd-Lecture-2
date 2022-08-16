@@ -4,21 +4,21 @@ import Styling from './Styling';
 
 const GamePlayed = (props) => {
 
-    const { question, userAnswer, time, correct, speed} = props;
+    const { question, userAnswer, time, correct} = props;
      
-    // console.log({props})
+    
 
     const hasIncorrectAnswer = !correct;
-    const hasCorrectAnswerInTime = correct && speed; 
+    const hasCorrectAnswer = correct; 
 
 
-    let colorClass = 'correct_answer--outTime';
+    let colorClass = '';
   
     if (hasIncorrectAnswer) {
       colorClass = 'incorrect_answer';
     }
-    else if (hasCorrectAnswerInTime) {
-      colorClass = 'correct_answer--inTime';
+    else if (hasCorrectAnswer) {
+      colorClass = 'correct_answer';
     }
     
 

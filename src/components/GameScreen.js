@@ -30,7 +30,6 @@ const GameScreen = (props) => {
       <h2>Select the Number Of Rounds</h2>
       <form>
         <input className="inputVal" name='inputRound' type="number" min="1" max="20" value={round} onChange={handleChange} autoFocus> 
-        
           </input>
           <button id='btn' onClick={handleClick}>Begin Game</button>
       </form>
