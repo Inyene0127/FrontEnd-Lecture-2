@@ -1,59 +1,63 @@
 #btn {
-    padding: 10px;
-    width: 150px;
-    background: #3a17c5;
-    color: rgb(236, 229, 229);
-    font-size: 20px;
-    cursor: pointer;
-    transition: 0.3s;
-    border-radius: 15px;
-    align-items: center;
-    border: none;
-    justify-content: center;
-    transform: translate(-50%, 90%);
-    margin-left: 150px;
-    margin-bottom: 30px; 
-  }  
+  padding: 10px;
+  width: 150px;
+  background: #3a17c5;
+  color: rgb(236, 229, 229);
+  font-size: 20px;
+  cursor: pointer;
+  transition: 0.3s;
+  border-radius: 15px;
+  align-items: center;
+  border: none;
+  justify-content: center;
+  transform: translate(-50%, 90%);
+  margin-left: 150px;
+  margin-bottom: 30px;
+}
 #btn:hover {
-    background-color: #bbb;
-    color: #3a17c5;
-    border-radius: 15px;
-  }
-.inputVal{
-  margin: 0;
+  background-color: #bbb;
+  color: #3a17c5;
+  border-radius: 15px;
+}
+.inputVal {
+  /* margin: 0; */
   border: none;
   border-radius: 15px;
   width: 80%;
   padding: 10px;
-  float: left;
   font-size: 18px;
-  margin-left: 30px;
+}
+h1 {
+  font-size: 40px;
+  text-align: center;
+}
+
+.input-label {
+  display: block;
+  margin-bottom: 10px;
+}
+
+.input-container {
+  display: block;
   margin-top: 20px;
-  text-align: left;
-  align-items: center;
-  justify-content: center;
-  }
-  h1{
-    font-size: 40px;
-    text-align: center;
-  }
-  
-.header{
+}
+
+.header {
   background-color: #3a17c5;
   padding: 30px 40px 30px 40px;
   color: #3a17c5;
   text-align: center;
 }
-p{
+p {
   font-size: 20px;
   text-align: left;
   padding: 10px;
 }
-h2{
+h2 {
   text-align: center;
   margin-top: 10px;
 }
-#container{
+#container {
   justify-content: center;
   width: 40%;
   min-width: 450px;
@@ -65,28 +69,24 @@ h2{
   border-radius: 38px;
   background: #e0e0e0;
   margin-bottom: 40px;
-
 }
-.time_spent{
-    margin-top: 20px;
-    text-align: center;
-  } 
-.game_history{
-  
-  background-color:#958888;
+.time_spent {
+  margin-top: 20px;
+  text-align: center;
+}
+.game_history {
+  background-color: #958888;
   opacity: 20;
   /* padding: 30px 40px 30px 40px; */
   text-align: center;
   display: grid;
   grid-template-columns: 3fr 3fr 3fr 1fr;
-
 }
-.total_history{
+.total_history {
   margin-top: 45px;
-  background-color:#958888;
+  background-color: #958888;
   opacity: 20;
   /* padding: 30px 40px 30px 40px; */
   text-align: center;
   display: grid;
-  
 }

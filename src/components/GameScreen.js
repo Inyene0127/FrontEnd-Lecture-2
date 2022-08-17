@@ -1,40 +1,56 @@
-import React,{ useState } from 'react';
-import { http } from '../utils';
-import { GAME_MODES, HTTP_METHODS } from '../utils/constants'
-
-
 const GameScreen = (props) => {
+  const { round, handleSubmit, setRound, handleNameChange, playerName } = props;
 
-   const {round, handleGameStart, setRound} = props
-  
   const handleChange = ({ target }) => {
-
     const newRound = target.value;
     //Validates that the user input a round within 1-20
-    if (newRound >= 1 && newRound <= 20){
-          setRound(newRound);
-        };
-  }
+    if (newRound >= 1 && newRound <= 20) {
+      setRound(newRound);
+    }
+  };
 
-   const handleClick = (e) => {
+  const handleFormSubmit = (e) => {
     e.preventDefault();
-    handleGameStart();   
-    
-   }
-   
-   
+    handleSubmit();
+  };
 
   return (
-    <div id='container' className='header'>
-      <p>Hi, this is Inyene's math game, choose your parameters and get to calculating!"</p>
+    <div id="container" className="header">
+      <p>
+        Hi, this is Inyene's math game, choose your parameters and get to
+        calculating!"
+      </p>
       <h2>Select the Number Of Rounds</h2>
-      <form>
-        <input className="inputVal" name='inputRound' type="number" min="1" max="20" value={round} onChange={handleChange} autoFocus> 
-          </input>
-          <button id='btn' onClick={handleClick}>Begin Game</button>
+      <form onSubmit={handleFormSubmit}>
+        <div className="input-container">
+          <input
+            className="inputVal"
+            name="inputRound"
+            type="number"
+            min="1"
+            max="20"
+            value={round}
+            onChange={handleChange}
+            autoFocus
+          />
+        </div>
+        <div className="input-container">
+          <h2 className="input-label">Username</h2>
+          <input
+            className="inputVal"
+            type="text"
+            required
+            placeholder="Input your username"
+            value={playerName}
+            onChange={handleNameChange}
+          />
+        </div>
+        <button id="btn" type="submit">
+          Begin Game
+        </button>
       </form>
     </div>
-  )
-}
+  );
+};
 
-export default GameScreen
+export default GameScreen;

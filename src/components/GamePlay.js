@@ -5,7 +5,7 @@ import { HTTP_METHODS } from "../utils/constants";
 const GamePlay = (props) => {
   const [gameCount, setGameCount] = useState(1);
   const [userAnswer, setUserAnswer] = useState("");
-  const [skipGame, setSkipGame] = useState(false);
+  const [skipGame, setSkipGame] = useState(1);
 
   const {
     round,
@@ -27,7 +27,7 @@ const GamePlay = (props) => {
     setCurrentQuestion(generateProblemSec());
   };
 
-  const submitForm = async (event) => {
+  const submitForm = async (event, skip) => {
     event.preventDefault();
     setIsLoading(true);
     setErrorState(null);
@@ -36,7 +36,7 @@ const GamePlay = (props) => {
         url: `/games/${id}/moves`,
         method: HTTP_METHODS.POST,
         body: {
-          guess: userAnswer,
+          guess: skip ? "skip" : userAnswer,
         },
       });
       if (!question) {
@@ -45,6 +45,9 @@ const GamePlay = (props) => {
         return;
       }
       const { game, move } = request;
+
+      console.log({ game });
+      setSkipGame(game.skipsRemaining);
       const playedRoundsArray = {
         question: currentQuestion.question,
         userAnswer,
@@ -95,8 +98,8 @@ const GamePlay = (props) => {
           Submit
         </button>
       </form>
-      {skipGame < Math.floor(round / 3) && (
-        <button id="btn" onClick={handleSkip}>
+      {!!skipGame && (
+        <button onClick={(e) => submitForm(e, true)} id="btn">
           Skip
         </button>
       )}

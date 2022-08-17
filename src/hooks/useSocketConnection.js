@@ -13,8 +13,6 @@ const useSocketConnection = () => {
         console.log({ closedReason: reason });
       },
       onMessage: ({ eventName, payload }) => {
-        console.log({ eventName, payload });
-
         const isOnlinePlayerEvent = eventName === "online-players";
 
         if (isOnlinePlayerEvent) {
