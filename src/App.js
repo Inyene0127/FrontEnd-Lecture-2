@@ -19,6 +19,7 @@ import {
 } from './hooks/reducer';
 import GameHistory from './components/GameHistory'
 import {  connect  as defaultConnectWebSocket } from './components/Websocket'
+import useSocketConnection from './hooks/useSocketConnection'
 
 // const init = () => ({
 //   connecting: false,
@@ -62,32 +63,12 @@ import {  connect  as defaultConnectWebSocket } from './components/Websocket'
 //   }
 // };
 
-const initiateConnection = (connectWebSocket) => {
-  const webSocketConnection = (connectWebSocket || defaultConnectWebSocket)({
-    onOpen: () => {
-      console.log('server is running')
-    },
-      onClose: ({ reason }) => console.log({reason})
-        // dispatch({ type: "DISCONNECTED", payload: { reason } }),
-    //   onMessage: ({ type, event }) => {
-      //   //     dispatch({ type: "MESSAGE_RECEIVED", payload: { type, event } });
-      //   },
-      // });
-      // dispatch({ type: "CONNECTING", payload: webSocketConnection });
-    })
-    return webSocketConnection;
-};
-
 
 const App = (props) => {
 
   const [state, dispatch] = useReducer(reducer,undefined, initialState);
-  const connectWebSocket = props.connectWebSocket || defaultConnectWebSocket;
 
-  useEffect(() => {
-    const webSocketConnection = initiateConnection(connectWebSocket);
-    // return (event) => webSocketConnection.close(event);
-  }, [connectWebSocket]);
+  const { connectWrapper, setGameStarted, gameStarted } = useSocketConnection();
   
 
  
@@ -106,6 +87,7 @@ const App = (props) => {
   //state that handles the array for the total rounds played
   const [gameHistory, setGameHistory] = useState([]); 
   const [playerName, setPlayerName] = useState('');
+  const [onlinePlayers, setOnlinePlayers] = useState([]);
 
 
   const handleGameStart = async () => {
@@ -184,11 +166,29 @@ const handleChange = ({ target }) => {
   
   const handleSubmit = (e) => {
     e.preventDefault();
+    setGameStarted(true);  
     handleGameStart();
+    console.log(playerName)
   }
+  const handleOnlinePlayers = ((onlinePlayers) => {
+    setOnlinePlayers(onlinePlayers);
+  } ) 
+  
+  
+  useEffect(() => {
+    if (gameStarted) {
+      const newConnection = connectWrapper({
+        playerName,
+        getOnlinePlayers: handleOnlinePlayers,
+      });  
+      return () => {
+        newConnection.close();
+      }
+    }
+  }, [gameStarted])
 
 
-
+console.log({onlinePlayers})
 
   return (
       <div> 
