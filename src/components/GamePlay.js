@@ -7,7 +7,6 @@ import {  HTTP_METHODS } from '../utils/constants'
 
 const GamePlay = (props) => { 
     
-  const [gameCount, setGameCount] = useState(1);
   const [userAnswer, setUserAnswer] = useState('');
   const [skipGame, setSkipGame] = useState(false);
 
@@ -19,7 +18,9 @@ const GamePlay = (props) => {
     handleGamePlay,
     setErrorState,
     setCurrentQuestion,
-    playerName
+    onlinePlayers,
+    isConnected,
+    handleDisconnect
   } = props;
   const { question } = currentQuestion;
   const { id } = currentQuestion;
@@ -30,7 +31,6 @@ const GamePlay = (props) => {
     }
   
   const submitForm = async (event) => {
-    
       event.preventDefault();
       setIsLoading(true);
       setErrorState(null);
@@ -81,10 +81,13 @@ const GamePlay = (props) => {
   return (
 
           <div id='container' className='header'> 
-          {
+          { isConnected &&
             <div>
-              Online Players
-              <li>{playerName}</li>
+            <button onClick={handleDisconnect}>DISCONNECT</button>
+              <p className='online-players'>Online Players</p>
+              <ul>{onlinePlayers.map((player) => (
+                <li key={player.id}>{player.name}</li>
+              ))}</ul>
               </div>
           }         
             <h1>{question}</h1>

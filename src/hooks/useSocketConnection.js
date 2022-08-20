@@ -1,28 +1,24 @@
-import React, { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { connect } from '../components/Websocket'
 
 const useSocketConnection = () => {
     const connectWrapper = ({ playerName, getOnlinePlayers }) => connect({
-        onOpen: () => console.log('open'),
-        onClose: ({ reason }) => console.log('closed'),
+        onOpen: () => {},
+        onClose: () => {},
         onMessage: ({ eventName, payload}) => {
-            console.log({playerName})
-            console.log('receiving message')
-            console.log({eventName, payload})
             const isOnlinePlayerEvent = eventName === 'online-players';
                 if (isOnlinePlayerEvent){
                     getOnlinePlayers(payload)
-                }
+            }
         },
         playerName: { playerName },
     })
-
-    const [gameStarted, setGameStarted] = useState(false);
+    const [isConnected, setIsConnected] = useState(false);
 
 return {
     connectWrapper,
-    gameStarted,
-    setGameStarted
+    isConnected,
+    setIsConnected
     };
 }
 export default useSocketConnection

@@ -5,6 +5,8 @@ import GameEnd from './components/GameEnd'
 import GamePlayed from './GamePlayed'
 import { GAME_MODES, HTTP_METHODS } from './utils/constants'
 import { generateProblemSec, http } from './utils/index';
+import GameHistory from './components/GameHistory'
+import useSocketConnection from './hooks/useSocketConnection'
 import {
   reducer,
   changeGameMode,
@@ -17,62 +19,10 @@ import {
   clearPreviousPlayedRounds,
   changeErrorState,
 } from './hooks/reducer';
-import GameHistory from './components/GameHistory'
-import {  connect  as defaultConnectWebSocket } from './components/Websocket'
-import useSocketConnection from './hooks/useSocketConnection'
 
-// const init = () => ({
-//   connecting: false,
-//   connected: false,
-//   connectionError: null,
-// });
-
-// const appReducer = (state, action) => {
-//   switch (action.type) {
-//     case "CONNECTING":
-//       return {
-//         ...state,
-//         connecting: true,
-//         connected: false,
-//         webSocketConnection: action.payload,
-//       };
-//     case "CONNECTED":
-//       return { ...state, connecting: false, connected: true };
-//     case "DISCONNECTED":
-//       return {
-//         ...state,
-//         connecting: false,
-//         connected: false,
-//         connectionError: action.payload.reason,
-//       };
-//     case "MESSAGE_RECEIVED":
-//       return null;
-//     default:
-//       throw new Error("Bad WebSocket reducer usage");
-//   }
-// };
-
-// const connectionDescription = (state) => {
-//   if (state.connected) {
-//     return "Connected";
-//   } else if (state.connecting) {
-//     return "Connecting";
-//   } else {
-//     const details = state.connectionError ? `(${state.connectionError})` : "";
-//     return `Disconnected${details}`;
-//   }
-// };
-
-
-const App = (props) => {
+const App = () => {
 
   const [state, dispatch] = useReducer(reducer,undefined, initialState);
-
-  const { connectWrapper, setGameStarted, gameStarted } = useSocketConnection();
-  
-
- 
-
   const setGameMode = (gameMode) => dispatch(changeGameMode(gameMode));
   const setRound = (round) => dispatch(changeRound(round));
   const setTimer = (timer) => dispatch(changeTimer(timer)); 
@@ -81,15 +31,17 @@ const App = (props) => {
   const setPreviousPlayedRounds = (previousPlayedRounds) => dispatch(changePreviousPlayedRounds(previousPlayedRounds));
   const setClearPreviousPlayedRounds = () => dispatch(clearPreviousPlayedRounds());
   const setErrorState = (error) => dispatch(changeErrorState(error));
-
+ 
+  //Destructuring
   const { currentQuestion, gameMode, previousPlayedRounds, round, timer, isLoading, error} = state
+  const { connectWrapper, setIsConnected, isConnected } = useSocketConnection();
 
   //state that handles the array for the total rounds played
   const [gameHistory, setGameHistory] = useState([]); 
   const [playerName, setPlayerName] = useState('');
   const [onlinePlayers, setOnlinePlayers] = useState([]);
 
-
+  //Function that handles the fetch request when the game starts
   const handleGameStart = async () => {
     setIsLoading(true);
     setErrorState(null);
@@ -101,8 +53,7 @@ const App = (props) => {
           type: "mathemagician",
           rounds: round,      
         },
-      });
-       
+      });   
     if (!question) {
         setErrorState('error fetching request');
         return;
@@ -116,26 +67,18 @@ const App = (props) => {
       }
     finally{
         setIsLoading(false);
-      }
-
-    
+      } 
   }
 
   const handleGamePlay = (playedRoundsArray, request) => {
-    
     setPreviousPlayedRounds(playedRoundsArray);
-
     const currentPlayedRound = [...previousPlayedRounds, playedRoundsArray];
-
     const allTimers = currentPlayedRound.reduce((total, curr) => {
       return (total += curr.time);
     }, 0);
-
     setTimer(allTimers);
-
     if (request) {
       setCurrentQuestion(generateProblemSec(request.game));
-      console.log({request})
     } else {
       setGameMode(GAME_MODES.GAME_END);
       setGameHistory((gameHistory) => [
@@ -155,53 +98,47 @@ const App = (props) => {
   setClearPreviousPlayedRounds([]);
 };
 
-// const handleSkip = () => {
-//   if (request)
-//   setCurrentQuestion(generateProblemSec(question)); 
-// } 
-const handleChange = ({ target }) => {
-  const newName = target.value;
+ const handleChange = ({ target }) => {
+   const newName = target.value;
   setPlayerName(newName);
   };
   
-  const handleSubmit = (e) => {
+ const handleConnect = (e) => {
     e.preventDefault();
-    setGameStarted(true);  
+    setIsConnected(true);  
     handleGameStart();
-    console.log(playerName)
   }
+  const handleDisconnect = () => {
+    setIsConnected(false);
+  }
+
   const handleOnlinePlayers = ((onlinePlayers) => {
     setOnlinePlayers(onlinePlayers);
-  } ) 
-  
+  }); 
   
   useEffect(() => {
-    if (gameStarted) {
+    if (isConnected) {
       const newConnection = connectWrapper({
-        playerName,
+        playerName,        
         getOnlinePlayers: handleOnlinePlayers,
       });  
       return () => {
         newConnection.close();
       }
     }
-  }, [gameStarted])
-
-
-console.log({onlinePlayers})
+  }, [isConnected]);
 
   return (
       <div> 
-        {error && <div>{error}, please try again</div>}
+        {error && <div>{ error }, please try again</div>}
         { gameMode === GAME_MODES.GAME_DISPLAY &&
           <div>
-            <form onSubmit={handleSubmit}>
-            Your Name: <input type='text' placeholder='Input your username' value={playerName} onChange={handleChange}></input>
-            <button>Submit</button>
+            <form onSubmit={ handleConnect }>
+            Your Name: <input type='text' placeholder='Input your username' value={playerName} onChange={handleChange} autoFocus/>
+            <button>CONNECT</button>
             </form>
           </div>
-        }
-
+          }
          {/*current concluded game round */}
         { previousPlayedRounds.map((rounds, index) => {
           return (
@@ -209,17 +146,14 @@ console.log({onlinePlayers})
           <GamePlayed {...rounds}/>
             </div>
              )})}  
-             
-    
         { gameMode === GAME_MODES.GAME_DISPLAY &&
-            <GameScreen 
+            <GameScreen
             handleGameStart={handleGameStart} 
             round={round}  
             setRound={setRound} 
             setPlayerName={setPlayerName}
             playerName={playerName}
             />}
-
         { gameMode === GAME_MODES.GAME_START &&
            <GamePlay 
            round={round} 
@@ -230,25 +164,22 @@ console.log({onlinePlayers})
            handleGamePlay={handleGamePlay}
            setErrorState={setErrorState}
            setCurrentQuestion={setCurrentQuestion}
-           playerName={playerName}
+           onlinePlayers={onlinePlayers}
+           isConnected={isConnected}
+           handleDisconnect={handleDisconnect}
            />
           }
-        
         { gameMode === GAME_MODES.GAME_END && 
            <GameEnd 
            timer={timer} 
            handleHome={handleHome} 
            handleRestart={handleRestart}/>
           } 
-        
         {/*total game round played */}
         { gameMode === GAME_MODES.GAME_END && 
         <GameHistory gameHistory={gameHistory} />
-            } 
-                     
-          
+            }    
     </div>
   )
 }
-
 export default App

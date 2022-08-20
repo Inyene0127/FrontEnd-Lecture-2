@@ -87,6 +87,9 @@ h2{
   opacity: 20;
   /* padding: 30px 40px 30px 40px; */
   text-align: center;
-  display: grid;
-  
+  display: grid; 
+}
+.online-players{
+  text-align: center;
+  font-style: oblique;
 }
