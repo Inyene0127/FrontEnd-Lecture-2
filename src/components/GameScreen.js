@@ -1,8 +1,3 @@
-import React,{ useState } from 'react';
-import { http } from '../utils';
-import { GAME_MODES, HTTP_METHODS } from '../utils/constants'
-
-
 const GameScreen = (props) => {
 
    const {round, handleGameStart, setRound} = props
@@ -13,7 +8,7 @@ const GameScreen = (props) => {
     //Validates that the user input a round within 1-20
     if (newRound >= 1 && newRound <= 20){
           setRound(newRound);
-        };
+        }
   }
 
    const handleClick = (e) => {

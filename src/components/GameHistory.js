@@ -1,5 +1,5 @@
-import React from 'react'
-import GamePlayed from '../GamePlayed'
+// import React from "react"
+import GamePlayed from "../GamePlayed"
 
 const GameHistory = (props) => {
 
