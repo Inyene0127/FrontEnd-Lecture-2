@@ -95,7 +95,7 @@ const GamePlay = (props) => {
                 autoFocus/>
                   <button id='btn' type='submit'>Submit</button>
               </form>
-              { skipGame && (
+              { !!skipGame && (
               <button id='btn' 
               onClick={(e) => submitForm(e, true)}>
                 Skip
