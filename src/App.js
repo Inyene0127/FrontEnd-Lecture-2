@@ -9,7 +9,7 @@ import useAppLogic from "./hooks/useAppLogic";
 
 const App = () => {
   const {
-    //function call
+    //Function call
     handleDisconnect,
     handleConnect,
     handleChange,
@@ -18,7 +18,7 @@ const App = () => {
     handleGamePlay,
     handleGameStart,
 
-    //state
+    //State
     playerName,
     error,
     gameMode,
@@ -31,7 +31,7 @@ const App = () => {
     onlinePlayers,
     gameHistory,
 
-    //setting state
+    //Setting state
     setCurrentQuestion,
     setErrorState,
     setIsLoading,
@@ -45,13 +45,9 @@ const App = () => {
   return (
       <div> 
         {error && <div>{ error }, please try again</div>}
-        { gameMode === GAME_MODES.GAME_DISPLAY &&
-          <div>
-            <form onSubmit={ handleConnect }>
-            Your Name: <input type='text' placeholder='Input your username' value={playerName} onChange={handleChange} autoFocus/>
-            <button>CONNECT</button>
-            </form>
-          </div>
+        { isConnected ? 
+        <div>{playerName} is connected</div> :
+        <div>you are not connected</div>
           }
          {/*current concluded game round */}
         { previousPlayedRounds.map((rounds, index) => {
@@ -67,6 +63,8 @@ const App = () => {
             setRound={setRound} 
             setPlayerName={setPlayerName}
             playerName={playerName}
+            handleNameChange={handleChange}
+            handleConnect={handleConnect}
             />}
         { gameMode === GAME_MODES.GAME_START &&
            <GamePlay 

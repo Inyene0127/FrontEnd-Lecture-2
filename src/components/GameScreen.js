@@ -1,6 +1,6 @@
 const GameScreen = (props) => {
 
-   const {round, handleGameStart, setRound} = props
+   const {round, setRound, handleNameChange, playerName, handleConnect} = props
   
   const handleChange = ({ target }) => {
 
@@ -11,10 +11,9 @@ const GameScreen = (props) => {
         }
   }
 
-   const handleClick = (e) => {
+   const handleFormSubmit = (e) => {
     e.preventDefault();
-    handleGameStart();   
-    
+    handleConnect();  
    }
    
    
@@ -23,10 +22,19 @@ const GameScreen = (props) => {
     <div id='container' className='header'>
       <p>Hi, this is Inyene's math game, choose your parameters and get to calculating!"</p>
       <h2>Select the Number Of Rounds</h2>
-      <form>
-        <input className="inputVal" name='inputRound' type="number" min="1" max="20" value={round} onChange={handleChange} autoFocus> 
-          </input>
-          <button id='btn' onClick={handleClick}>Begin Game</button>
+      <form onSubmit={handleFormSubmit}>
+        <input className="inputVal" name='inputRound' type="number" min="1" max="20" value={round} onChange={handleChange} autoFocus/>
+        <div>
+          <h2>UserName</h2>
+          <input type='text' 
+          className="inputVal"
+          placeholder='Input your username' 
+          value={playerName} 
+          onChange={handleNameChange}
+          required 
+          autoFocus/>
+        </div>
+          <button id='btn'>Begin Game</button>
       </form>
     </div>
   )

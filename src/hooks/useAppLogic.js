@@ -89,8 +89,8 @@ const useAppLogic = () => {
  };
 
  const handleHome = () => {  
-  setGameMode(GAME_MODES.GAME_DISPLAY);
   setClearPreviousPlayedRounds([]);
+  setGameMode(GAME_MODES.GAME_DISPLAY);
 };
 
  const handleChange = ({ target }) => {
@@ -98,9 +98,16 @@ const useAppLogic = () => {
   setPlayerName(newName);
   };
   
- const handleConnect = (e) => {
-    e.preventDefault();
-    setIsConnected(true);  
+ const handleConnect = () => {
+   if (!playerName.trim()){
+    alert('Please input your username');
+    return;
+   }
+
+
+    if (!isConnected){
+      setIsConnected(true);  
+    }
     handleGameStart();
   }
   const handleDisconnect = () => {
@@ -120,6 +127,8 @@ const useAppLogic = () => {
       return () => {
         newConnection.close();
       }
+    }else {
+      handleHome();
     }
   }, [isConnected]);
   return {

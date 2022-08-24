@@ -20,18 +20,15 @@
     border-radius: 15px;
   }
 .inputVal{
-  margin: 0;
+  /* margin: 0; */
   border: none;
   border-radius: 15px;
   width: 80%;
   padding: 10px;
-  float: left;
   font-size: 18px;
   margin-left: 30px;
   margin-top: 20px;
-  text-align: left;
-  align-items: center;
-  justify-content: center;
+  
   }
   h1{
     font-size: 40px;

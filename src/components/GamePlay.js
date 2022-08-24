@@ -1,5 +1,5 @@
-import React,{ useState } from 'react'
-import {  generateProblemSec, http } from '../utils';
+import { useState } from 'react'
+import { http } from '../utils';
 import {  HTTP_METHODS } from '../utils/constants'
 
 
@@ -8,16 +8,14 @@ import {  HTTP_METHODS } from '../utils/constants'
 const GamePlay = (props) => { 
     
   const [userAnswer, setUserAnswer] = useState('');
-  const [skipGame, setSkipGame] = useState(false);
+  const [skipGame, setSkipGame] = useState(1);
 
   const {
-    round,  
     currentQuestion, 
     setIsLoading, 
     isLoading,  
     handleGamePlay,
     setErrorState,
-    setCurrentQuestion,
     onlinePlayers,
     isConnected,
     handleDisconnect
@@ -25,13 +23,14 @@ const GamePlay = (props) => {
   const { question } = currentQuestion;
   const { id } = currentQuestion;
 
-  const handleSkip = (e) => {
-    e.preventDefault();
-    setCurrentQuestion(generateProblemSec());  
-    }
+
   
-  const submitForm = async (event) => {
-      event.preventDefault();
+  const submitForm = async (e, skip) => {
+      e.preventDefault();
+      if (!userAnswer.trim() && !skip){
+        alert('Please submit an answer!');
+        return;
+      }
       setIsLoading(true);
       setErrorState(null);
       try { 
@@ -39,7 +38,7 @@ const GamePlay = (props) => {
         url: `/games/${id}/moves`,
         method: HTTP_METHODS.POST,
         body: {
-          guess:  userAnswer,      
+          guess: skip ? 'skip' : userAnswer,      
         }
       }) 
       if (!question) {
@@ -48,12 +47,12 @@ const GamePlay = (props) => {
         return;
       }
   const { game, move } = request;
+  setSkipGame(game.skipsRemaining);
   const playedRoundsArray = {
         question: currentQuestion.question,
         userAnswer,
         time: move.timeSpentMillis,
         correct: move.correct,
-        // skipped: move.skipped
       }
       if (game.nextExpression){
         handleGamePlay(playedRoundsArray, request);
@@ -69,14 +68,10 @@ const GamePlay = (props) => {
       setIsLoading(false);
     }
     
-  };
-  
-  
-  
+  };  
   if (isLoading) {
     return <h2>Game is loading...</h2>    
   }  
-
 
   return (
 
@@ -92,10 +87,20 @@ const GamePlay = (props) => {
           }         
             <h1>{question}</h1>
               <form onSubmit={submitForm}>
-                <input className="inputVal" value={userAnswer} onChange={(e) => setUserAnswer((e.target.value))} autoFocus/>
+                <input 
+                className="inputVal" 
+                value={userAnswer} 
+                onChange={(e) => setUserAnswer((e.target.value))} 
+                required
+                autoFocus/>
                   <button id='btn' type='submit'>Submit</button>
               </form>
-              {skipGame < Math.floor(round/3) && <button id='btn' onClick={handleSkip}>Skip</button>}
+              { skipGame && (
+              <button id='btn' 
+              onClick={(e) => submitForm(e, true)}>
+                Skip
+              </button>
+              )}
               
         </div>
   )
